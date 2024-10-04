@@ -1,0 +1,21 @@
+{
+  "pages":[                
+    "pages/equipment/equipment",
+    "pages/bluetooth/bluetooth"
+  ],
+
+  "window": {
+    "backgroundTextStyle":"dark",
+    "navigationBarBackgroundColor":"#fff",
+    "navigationBarTitleText":"smartbike bluetooth command send and receive",
+    "navigationBarTextStyle":"black"
+  },
+
+  "permission":{
+    "scope":{
+      "bluetooth":{
+        "desc":"we need bluetooth permission to find our device"
+      }
+    }
+  }
+}

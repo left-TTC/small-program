@@ -1,0 +1,18 @@
+.button-container {
+  display: flex;
+  justify-content: space-around;  /* 水平分布按钮 */
+  margin: 20px 0;                 /* 上下间距 */
+}
+
+.receive-area {
+  border: 1px solid #ADD8E6; /* 浅蓝色边框 */
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+.device-style {
+  border: 1px solid #ADD8E6; /* 浅蓝色边框 */
+  padding: 10px;
+  margin-bottom: 16px;
+}

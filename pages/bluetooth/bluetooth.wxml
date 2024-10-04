@@ -1,0 +1,17 @@
+<view class="container">
+  <view class="device-style">
+    <text>设备名称: {{device.name}}</text>
+    <text>信号强度: {{device.signalStrength}} dBm</text>
+  </view>
+
+  <view class="button-container">
+    <button class="command-button" bindtap="sendCommand" data-command="bikelock$">bikelock on</button>
+    <button class="command-button" bindtap="sendCommand" data-command="unbikelock$">bikelock off</button>
+    <button class="command-button" bindtap="sendCommand" data-command="batterylock$">batterylock on</button>
+    <button class="command-button" bindtap="sendCommand" data-command="unbatterylock$">batterylock off</button>
+  </view>
+
+  <view class="receive-area">
+    <text>received: {{receivedData}}</text>
+  </view>
+</view>

@@ -1,0 +1,11 @@
+.container {
+  padding: 10px;
+}
+
+.device-item {
+  border: 1px solid #ADD8E6;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
