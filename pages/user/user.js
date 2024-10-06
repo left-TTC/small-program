@@ -1,4 +1,4 @@
-// pages/device/devices.js
+// pages/user/user.js
 Page({
 
   /**

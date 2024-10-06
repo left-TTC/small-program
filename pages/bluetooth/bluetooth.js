@@ -5,12 +5,19 @@ Page({
     deviceId: '',
     serviceId: '',
     characteristicId1: '',
-    characteristicId2: ''
-  },
+    characteristicId2: '',
+    device: {
+      name: '',
+      signalStrength: 0
+    },
+    signalUpdateInterval: null ,// 存储定时器ID
+    batteryLockState:-1          //监控电池锁的状态,-1意味着没有设置
+},
 
+//------------------------------onload-------------------------------
   onLoad: function(options) {
     const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength } = options;
-
+ 
     this.setData({
       deviceId: deviceId,
       serviceId: serviceId,
@@ -21,20 +28,69 @@ Page({
         signalStrength: signalStrength
       }
     });
+    this.listentoBlue();
+    this.startSignalStrengthUpdate();         
+ },
 
+ onReady:function(){
+  wx.setNavigationBarTitle({
+    title:"设备列表",
+  }); 
+},
+
+onShow:function(){
+
+},
+
+onHide:function(){
+
+},
+
+onUnload:function(){
+},
+
+
+//---------------------------------fun-------------------
+startSignalStrengthUpdate: function() {
+  this.setData({
+    signalUpdateInterval: setInterval(() => {
+      this.getDeviceRSSI(); // 定期更新信号强度
+    }, 2000) // 每秒更新一次
+  });
+},
+
+stopSignalStrengthUpdate: function() {
+  clearInterval(this.data.signalUpdateInterval);
+  this.setData({
+    signalUpdateInterval: null
+  });
+},
+
+getDeviceRSSI: function() {
+  wx.getBLEDeviceRSSI({
+    deviceId: this.data.deviceId,
+    success: (res) => {
+      this.setData({
+        'device.signalStrength': res.RSSI // 更新信号强度
+      });
+    },
+  });
+},
+
+  listentoBlue:function(){
     wx.notifyBLECharacteristicValueChange({
       deviceId: this.data.deviceId,
       serviceId: this.data.serviceId,
       characteristicId: this.data.characteristicId2,
       state: true,
-      success: (res) => {
+      success: (_res) => {
         wx.showToast({
           title: '正在监听Bike',                
           icon: 'none',
           duration: 1000,
         });
       },
-      fail: (err) => {
+      fail: (_err) => {
         wx.showToast({
           title: '无法监听Bike',
           icon: 'none',
@@ -42,13 +98,12 @@ Page({
         });
       }
     });
-    
-    wx.onBLECharacteristicValueChange((characteristic) => {
-       const data = this.bufferToString(characteristic.value);
-        this.receivedData(data); 
-       });
- },
 
+    wx.onBLECharacteristicValueChange((characteristic) => {
+      const data = this.bufferToString(characteristic.value);
+       this.receivedData(data); 
+      });
+  },
 
   sendCommand: function(event) {  
     const command = event.currentTarget.dataset.command; 
@@ -61,38 +116,39 @@ Page({
       deviceId: this.data.deviceId,
       serviceId: this.data.serviceId,
       value: this.stringToBuffer(command),
-      success: (res) => {
+      success: (_res) => {
         wx.showToast({
           title: '发送成功',
           icon: 'none',
           duration: 1000,
         });
       },
-      fail: (err) => {
+      fail: (_err) => {
         wx.showToast({
           title: '发送失败',
           icon: 'none',
           duration: 1000,
         });
-        console.error("Failed to send command:", err);
       }
     });
   },
 
-  stringToBuffer: function(str) {
-    const buffer = new ArrayBuffer(str.length);
-    const dataView = new Uint8Array(buffer);
 
-    for (let i = 0; i < str.length; i++) {
-      dataView[i] = str.charCodeAt(i);
-    }
-    return buffer;
-  },
-
-bufferToString: function(buffer) {
+//---------------------wx.onBLECharacteristicValueChange------------------
+stringToBuffer: function(str) {
+  const buffer = new ArrayBuffer(str.length);
   const dataView = new Uint8Array(buffer);
-  return String.fromCharCode.apply(null, dataView);
+
+  for (let i = 0; i < str.length; i++) {
+    dataView[i] = str.charCodeAt(i);
+  }
+  return buffer;
 },
+
+  bufferToString: function(buffer) {
+    const dataView = new Uint8Array(buffer);
+    return String.fromCharCode.apply(null, dataView);
+  },
 
   receivedData: function(data) {
     this.setData({

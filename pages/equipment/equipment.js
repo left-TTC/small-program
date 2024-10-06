@@ -6,17 +6,47 @@ Page({
   },
 
   onLoad: function() {
+    this.loadDevices();
+  },
+
+  onReady:function(){
+    wx.setNavigationBarTitle({
+      title:"设备列表",
+    }); 
+  },
+
+  onShow:function(){
+ 
+  },
+
+  onHide:function(){
+
+  },
+
+  onUnload:function(){
+  },
+
+//-------------下拉刷新设备列表---------------
+  loadDevices: function() {
+    const app = getApp();
     this.setData({
-      devices: getApp().equipments 
+      devices: app.devices // 从全局获取设备列表
     });
   },
 
+  onPullDownRefresh: function() { 
+    this.loadDevices();
+    setTimeout(() => {
+      wx.stopPullDownRefresh(); // 停止下拉刷新
+    }, 1000); 
+  },
+//-----------------------------------------------------------
   goToBluetooth: function(event) {
     const device = event.currentTarget.dataset.device;
     const deviceID = device.deviceID;
     const { name, signalStrength } = device;
 
-    wx.createBLEConnection({
+    wx.createBLEConnection({     
       deviceId: deviceID,
       success: (res) => {
         this.getServices(deviceID, name, signalStrength); 
@@ -32,7 +62,7 @@ Page({
   },
 
   getServices: function(deviceId, name, signalStrength) {
-    wx.getBLEDeviceServices({
+    wx.getBLEDeviceServices({                        //得到服务id
       deviceId: deviceId,
       success: (res) => {
         if (res.services.length > 0) {
@@ -45,7 +75,7 @@ Page({
   },
 
   getCharacteristics: function(deviceId, serviceId, name, signalStrength) {
-    wx.getBLEDeviceCharacteristics({
+    wx.getBLEDeviceCharacteristics({                    //得到特征id
       deviceId: deviceId,
       serviceId: serviceId,
       success: (res) => {
@@ -85,7 +115,8 @@ Page({
 
     if (!characteristics.some(characteristic => characteristic.characteristicId === characteristicId)) {
       characteristics.push(characteristicInfo);
-      this.setData({ characteristics });
     }
   }
 });
+
+
