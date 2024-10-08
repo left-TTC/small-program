@@ -16,7 +16,7 @@ Page({
   },
 
   onShow:function(){
- 
+    this.loadDevices();
   },
 
   onHide:function(){

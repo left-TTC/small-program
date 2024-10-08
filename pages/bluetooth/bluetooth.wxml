@@ -4,14 +4,25 @@
     <text>信号强度: {{device.signalStrength}} dBm</text>
   </view>
 
-  <view class="button-container">
-    <button class="command-button" bindtap="sendCommand" data-command="bikelock$">bikelock on</button>
-    <button class="command-button" bindtap="sendCommand" data-command="unbikelock$">bikelock off</button>
-    <button class="command-button" bindtap="sendCommand" data-command="batterylock$">batterylock on</button>
-    <button class="command-button" bindtap="sendCommand" data-command="unbatterylock$">batterylock off</button>
+  <view class="STA-container">
+    <button class="command-button" bindtap="sendCommandAndGoToInstrumentBoard" data-command="bikelock$">开始骑行</button>
   </view>
 
   <view class="receive-area">
     <text>received: {{receivedData}}</text>
+  </view>
+
+  <view class = "battery-button">
+    <button class="command-button" bindtap="sendCommand" data-command="batterylock$">打开电池仓锁</button>
+    <button class="command-button" bindtap="sendCommand" data-command="unbatterylock$">关闭电池仓锁f</button>
+  </view>
+
+  <view>
+    <view wx:if="{{Batterylockstate === 0}}">
+      <image src="/image/off.jpg" mode="aspectFill"></image>
+    </view>
+    <view wx:if="{{Batterylockstate === 1}}">
+      <image src="/image/on.jpg" mode="aspectFill"></image>
+    </view>
   </view>
 </view>

@@ -6,23 +6,24 @@ Page({
     serviceId: '',
     characteristicId1: '',
     characteristicId2: '',
+    Batterylockstate:-1,
     device: {
       name: '',
       signalStrength: 0
     },
     signalUpdateInterval: null ,// 存储定时器ID
-    batteryLockState:-1          //监控电池锁的状态,-1意味着没有设置
 },
 
 //------------------------------onload-------------------------------
   onLoad: function(options) {
     const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength } = options;
- 
+    const app = getApp();
     this.setData({
       deviceId: deviceId,
       serviceId: serviceId,
       characteristicId1: characteristicId1,                //write 
       characteristicId2: characteristicId2,                //notify
+      Batterylockstate: app.globalData.batterylockstate,
       device: {
         name: name,
         signalStrength: signalStrength
@@ -34,12 +35,15 @@ Page({
 
  onReady:function(){
   wx.setNavigationBarTitle({
-    title:"设备列表",
+    title:"设备功能",
   }); 
 },
 
 onShow:function(){
-
+  const app = getApp();
+  this.setData({
+    Batterylockstate:app.globalData.batterylockstate
+  })
 },
 
 onHide:function(){
@@ -101,13 +105,26 @@ getDeviceRSSI: function() {
 
     wx.onBLECharacteristicValueChange((characteristic) => {
       const data = this.bufferToString(characteristic.value);
+      console.log(data);
        this.receivedData(data); 
+       this.judgelisten(data);
       });
+  },
+
+  sendCommandAndGoToInstrumentBoard:function(event){
+    this.sendCommand(event);
+    this.gotoInstrumentboard();
   },
 
   sendCommand: function(event) {  
     const command = event.currentTarget.dataset.command; 
     this.sendData(command);
+  },
+
+  gotoInstrumentboard: function() {
+    wx.navigateTo({
+      url: `/pages/instrumentBoard/instrumentBoard?deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&name=${this.data.device.name}&signalStrength=${this.data.device.signalStrength}`
+    });
   },
 
   sendData: function(command) {
@@ -155,5 +172,20 @@ stringToBuffer: function(str) {
         receivedData: data
     });
   },
+//----------------------judge----------------------
+judgelisten:function(data){
+  if(data.includes('battery2')){
+    this.setData({
+      Batterylockstate:0
+    })
+  }
+  else if(data.includes('battery1')){
+    this.setData({
+      Batterylockstate:1
+    })
+  }
+  const app = getApp();
+  app.globalData.batterylockstate = this.data.Batterylockstate
+},
 
 });

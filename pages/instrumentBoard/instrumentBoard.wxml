@@ -1,0 +1,21 @@
+<!--pages/instrumentBoard/instrumentBoard.wxml-->
+<view class="container">
+
+  <view class="receive-area">
+    <text>received: {{receivedData}}</text>
+  </view>
+
+  <view class = "battery-button">
+    <button class="command-button" bindtap="sendCommand" data-command="batterylock$">打开电池仓锁</button>
+    <button class="command-button" bindtap="sendCommand" data-command="unbatterylock$">关闭电池仓锁f</button>
+  </view>
+
+  <view>
+    <view wx:if="{{Batterylockstate === 0}}">
+      <image src="/image/off.jpg" mode="aspectFill"></image>
+    </view>
+    <view wx:if="{{Batterylockstate === 1}}">
+      <image src="/image/on.jpg" mode="aspectFill"></image>
+    </view>
+  </view>
+</view>

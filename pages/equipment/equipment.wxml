@@ -2,7 +2,6 @@
   <view class="container">
     <view wx:for="{{devices}}" wx:key="deviceID" bindtap="goToBluetooth" data-device="{{item}}" class="device-item">
       <text>{{item.name}}</text>
-      <text>{{item.signalStrength}}</text>
     </view>
   </view>
 

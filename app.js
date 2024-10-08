@@ -1,6 +1,9 @@
 // app.js
 App({
   devices: [],                     // define devices array 
+  globalData:{
+    batterylockstate:-1,
+  },
 
   onLaunch: function() {
     this.initializeBluetooth();         // find BLE device when launch
