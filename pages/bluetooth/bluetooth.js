@@ -16,6 +16,7 @@ Page({
 
 //------------------------------onload-------------------------------
   onLoad: function(options) {
+    console.log("no");
     const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength } = options;
     const app = getApp();
     this.setData({
@@ -51,6 +52,7 @@ onHide:function(){
 },
 
 onUnload:function(){
+  console.log("yes");
 },
 
 
@@ -105,7 +107,6 @@ getDeviceRSSI: function() {
 
     wx.onBLECharacteristicValueChange((characteristic) => {
       const data = this.bufferToString(characteristic.value);
-      console.log(data);
        this.receivedData(data); 
        this.judgelisten(data);
       });

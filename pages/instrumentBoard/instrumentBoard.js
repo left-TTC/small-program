@@ -12,7 +12,12 @@ Page({
       name: '',
       signalStrength: 0
     },
-    rotate_Counter: 0                //用于接收传递过来的轮转数
+    rotate_Counter: 0,                //用于接收传递过来的轮转数
+    lastlyrotate_Counter:0,
+    itinerary:0,
+    speed:0,
+    time:0,
+    timer:null,
   },
 
   /**
@@ -39,16 +44,17 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
-
+    wx.setNavigationBarTitle({
+      title:"仪表盘",
+    }); 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    wx.setNavigationBarTitle({
-      title:"仪表盘",
-    }); 
+    this.updateSpeed();
+    this.updateItinerary();
   },
 
   /**
@@ -85,7 +91,7 @@ Page({
   onShareAppMessage() {
 
   },
-//--------------------------------------------------------------------
+//-----------------------监听函数---------------------------------------------
 listentoBlue:function(){
   wx.notifyBLECharacteristicValueChange({
     deviceId: this.data.deviceId,
@@ -109,8 +115,7 @@ listentoBlue:function(){
   });
 
     wx.onBLECharacteristicValueChange((characteristic) => {
-      const data = this.bufferToString(characteristic.value);
-      console.log(data); 
+      const data = this.bufferToString(characteristic.value); 
       this.judgelisten(data);
       });
   },
@@ -127,6 +132,9 @@ listentoBlue:function(){
       })
     }
     if(data.includes('Mileage:')){               //将轮转数提取出来
+      this.setData({
+        lastlyrotate_Counter:this.data.rotate_Counter,   //保留上一次的值
+      });
       const mileageMatch = data.match(/Mileage:\s*(\d+)/);
       if (mileageMatch) {
         const mileage = parseInt(mileageMatch[1], 10);
@@ -134,6 +142,9 @@ listentoBlue:function(){
           rotate_Counter: mileage
         });
       }
+    }
+    if(data.includes('ready')){
+      this.startTimer();                        //如果回应已经开始供电，则开始计时
     }
     const app = getApp();
     app.globalData.batterylockstate = this.data.Batterylockstate
@@ -182,5 +193,79 @@ listentoBlue:function(){
     return String.fromCharCode.apply(null, dataView);
   },
 
+  //------------------进入下一个页面的函数----------------
+  settleAccountAndsendCommand:function(event){
+    this.stoptimer();                     //停止计数
+    this.stopSpeedUpdate();
+    this.stopItineraryUpdate();           //关闭定时器
+    this.settleAccount();                 //进入下一个页面
+    this.sendCommand(event);              //发送命令关车
+  },
+
+  settleAccount:function(){
+    wx.navigateTo({
+      url:`/pages/account/account?itinerary=${this.data.itinerary}&time=${this.data.time}`
+    });
+  },
+
+  //-----------------计算速度，里程的函数----------------
+  itineraryCalculate:function(data){
+    const calculatedValue = (3.14 * data * 0.4) / 1000;
+    this.setData({
+      itinerary:parseFloat(calculatedValue.toFixed(2))
+    });
+  },
+
+  speedCalculate:function(data1,data2){
+    const calculatedValue = ((data1-data2)*3.14*0.4)/0.3/3.6;
+    this.setData({
+      speed:Math.ceil(calculatedValue)       //向上取整，安全第一
+    });
+  },
+
+  updateSpeed:function(){                    //每0.3s更新一次速度
+    this.speedUpdateInterval = setInterval(() => {
+      const data1 = this.data.rotate_Counter;
+      const data2 = this.data.lastlyrotate_Counter;
+
+      this.speedCalculate(data1,data2);
+      console.log(this.data.speed);
+    },300);
+  },
+
+  stopSpeedUpdate: function() {
+    clearInterval(this.speedUpdateInterval); // 停止定时更新
+  },
+
+  updateItinerary:function(){
+    this.itineraryUpdateInterval = setInterval(() => {
+      const data = this.data.rotate_Counter;
+
+      this.itineraryCalculate(data);
+      console.log(this.data.itinerary);
+    },5000);
+  },
+
+  stopItineraryUpdate: function() {
+    clearInterval(this.itineraryUpdateInterval); // 停止定时更新
+  },
   
+  //------------------------计时------------------------------
+  startTimer:function(){
+    this.setData({
+      timer:setInterval(() => {
+        this.setData({
+          time:this.data.time + 1
+        })
+      },60000)                  
+    });
+  },
+
+  stoptimer:function(){
+    clearInterval(this.data.timer);
+    this.setData({
+      timer:null
+    });
+  },
+
 })

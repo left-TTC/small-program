@@ -7,7 +7,7 @@
 
   <view class = "battery-button">
     <button class="command-button" bindtap="sendCommand" data-command="batterylock$">打开电池仓锁</button>
-    <button class="command-button" bindtap="sendCommand" data-command="unbatterylock$">关闭电池仓锁f</button>
+    <button class="command-button" bindtap="sendCommand" data-command="unbatterylock$">关闭电池仓锁</button>
   </view>
 
   <view>
@@ -17,5 +17,15 @@
     <view wx:if="{{Batterylockstate === 1}}">
       <image src="/image/on.jpg" mode="aspectFill"></image>
     </view>
+  </view>
+
+  <view class = "cycling data">
+    <text>速度:{{speed}}Km/h</text>
+    <text>本次行驶路程:{{itinerary}}Km</text>
+    <text>本次骑行时间:{{time}}min</text>
+  </view>
+
+  <view class = "stopderiving">
+    <button class ="stop-button" bindtap="settleAccountAndsendCommand" data-command="unbikelock$">结束骑行</button>
   </view>
 </view>
