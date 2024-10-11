@@ -7,6 +7,9 @@ Page({
     characteristicId1: '',
     characteristicId2: '',
     Batterylockstate:-1,
+    price:'',
+    battery:"83",
+    mileageavailable:"40.3",
     device: {
       name: '',
       signalStrength: 0
@@ -17,7 +20,7 @@ Page({
 //------------------------------onload-------------------------------
   onLoad: function(options) {
     console.log("no");
-    const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength } = options;
+    const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength,price } = options;
     const app = getApp();
     this.setData({
       deviceId: deviceId,
@@ -25,6 +28,7 @@ Page({
       characteristicId1: characteristicId1,                //write 
       characteristicId2: characteristicId2,                //notify
       Batterylockstate: app.globalData.batterylockstate,
+      price:price,
       device: {
         name: name,
         signalStrength: signalStrength
@@ -36,7 +40,7 @@ Page({
 
  onReady:function(){
   wx.setNavigationBarTitle({
-    title:"设备功能",
+    title:"详情",
   }); 
 },
 

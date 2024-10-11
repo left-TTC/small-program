@@ -1,0 +1,78 @@
+.pages{
+  background: linear-gradient(to bottom, #99BBFF, white);
+  padding: 2px;
+  height: 250px;
+}
+
+.useway{
+  background-color: white;
+  border-radius:30rpx ;
+  margin:40rpx 40rpx 40rpx 40rpx;
+  padding:30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.section{
+  display: flex;
+  align-items: center;
+  margin-bottom: 40rpx;
+  height: 80rpx;
+  position: relative;
+}
+
+.text-section{
+  display: flex;
+  flex-direction: column;
+}
+
+.big{
+  font-size: 34rpx;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.small{
+  font-size: 23rpx;
+  color: gray;
+  margin-top: 4rpx;
+}
+
+.text-section {
+  position: absolute; /* 绝对定位 */
+  left: 0; /* 靠左 */
+}
+
+.scan-button {
+  position: absolute; /* 绝对定位 */
+  right: 0; /* 靠右 */
+  height: 80rpx;
+  width: 300rpx;
+  background-color:#0066FF;
+  color: white;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+}
+
+.find-button{
+  position: absolute; /* 绝对定位 */
+  right: 0; /* 靠右 */
+  background-color:#0066FF;
+  color: white;
+  height: 80rpx;
+  width: 300rpx;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+}
+
+.scanimage{
+  height: 40rpx;
+  width: 40rpx;
+  margin-right: 20rpx;
+}

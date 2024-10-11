@@ -1,18 +1,262 @@
-.STA-container {
+.pages{
+  background: linear-gradient(to bottom, #99BBFF, white);
+  padding: 2px;
+  height: 250px;
+}
+
+.device-container{
+  background-color: white;
+  opacity:0.7;
+  position: relative;
+  top:20rpx;
+  left:30rpx;
+  right: 300rpx;
+  width: calc(100% - 330rpx);
+  height: 250rpx;
+  border-radius:30rpx ;
+}
+
+.device-style{
+  position: relative;
+  top:10rpx;
+  height: 80rpx;
   display: flex;
-  justify-content: space-around;  /* 水平分布按钮 */
-  margin: 20px 0;                 /* 上下间距 */
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: space-between; /* 元素之间保持一定的空间，左右对齐 */
 }
 
-.receive-area {
-  border: 1px solid #ADD8E6; /* 浅蓝色边框 */
-  padding: 10px;
-  max-height: 300px;
-  overflow-y: scroll;
+.signalima{
+  height: 80rpx;
+  width: 100rpx;
 }
 
-.device-style {
-  border: 1px solid #ADD8E6; /* 浅蓝色边框 */
-  padding: 10px;
-  margin-bottom: 16px;
+.name{
+  position: relative; 
+  left:50rpx;
+  font-size: 48rpx;
+  font-weight: bold;
+  width: 4em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
+
+.signal{
+  position: relative;
+  right:20rpx;
+  bottom: 7rpx;
+}
+
+.horizontal-line{
+  height: 1px; /* 线的高度 */
+  background-color: #ccc; /* 线的颜色 */
+  margin: 0rpx 10rpx; 
+}
+
+.state{
+  display: flex;
+  flex-direction: column;
+}
+
+.price{
+  color: #444444;
+  position: relative;
+  top:10rpx;
+  left: 30rpx;
+  font-weight: bold;
+  font-size: 30rpx;
+}
+
+.battery{
+  color: #444444;
+  position: relative;
+  left: 30rpx;
+  top:10rpx;
+  font-weight: bold;
+  font-size: 30rpx;
+}
+
+.mileage{
+  color: #444444;
+  position: relative;
+  top:10rpx;
+  left: 30rpx;
+  font-weight: bold;
+  font-size: 30rpx;
+}
+
+.box-container{
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: space-between; /* 元素之间保持一定的空间，左右对齐 */
+}
+
+.GPS{
+  background-color: white;
+  opacity:0.7;
+  position: relative;
+  top:20rpx;
+  right: 30rpx;
+  width: 250rpx;
+  height: 250rpx;
+  border-radius:30rpx ;
+}
+
+.GPSimage{
+  position: relative;
+  top:22rpx;
+  height: 38rpx;
+  width: 38rpx;
+  margin-left: 40rpx;
+}
+
+.GP{
+  position: relative; 
+  top:20rpx;
+  left:20rpx;
+  font-size: 48rpx;
+  font-weight: bold;
+}
+
+.GPSstate{
+  display: flex;
+  flex-direction: column;
+}
+
+.no{
+  color: #444444;
+  font-weight: bold;
+  font-size: 30rpx;
+  position: relative;
+  left:38rpx;
+  top:30rpx;
+}
+
+.noimage{
+  height: 40rpx;
+  width: 40rpx;
+  position: relative;
+  left: 100rpx;
+  top:40rpx;
+}
+
+.horizontal-line1{
+  height: 1px; /* 线的高度 */
+  background-color: #ccc; /* 线的颜色 */
+  margin: 5rpx 10rpx; 
+  position: relative;
+  top:8rpx;
+}
+
+.batterystate{
+  background-color: white;
+  opacity:0.7;
+  position: relative;
+  top:50rpx;
+  left:30rpx;
+  right: 30rpx;
+  width: calc(100% - 60rpx);
+  height: 250rpx;
+  border-radius:30rpx ;
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: space-between; /* 元素之间保持一定的空间，左右对齐 */
+}
+
+.lockimage{
+  position: relative;
+  left:30rpx;
+  height: 120rpx;
+  width: 120rpx;
+}
+
+.lockshow{
+  position: relative;
+  top:-10rpx;
+  left:30rpx;
+}
+
+.batterytittle{
+  font-weight: bold;
+  font-size: 40rpx;
+}
+
+.on{
+  height: 80rpx;
+  width: 80rpx;
+  position: relative;
+  top:20rpx;
+  right: 6rpx;
+}
+
+.off{
+  height: 80rpx;
+  width: 80rpx;
+  position: relative;
+  top:20rpx;
+  right: 6rpx;
+}
+
+.twobutton{
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: space-between; /* 元素之间保持一定的空间，左右对齐 */
+  position: relative;
+  top:-10rpx;
+}
+
+.HH{
+  display: flex;
+  flex-direction: column;
+}
+
+.command-button1{
+  background-color: #0066FF;
+  height: 120rpx;
+  width: 120rpx;
+  border-radius:50%;
+  margin-right: 60rpx;
+}
+
+.command-button2{
+  background-color: #FF0000 ;
+  height: 120rpx;
+  width: 120rpx;
+  border-radius:50%;
+  margin-right: 60rpx;
+}
+
+.horizontal-line2{
+  height: 1px; /* 线的高度 */
+  background-color: #ccc; /* 线的颜色 */ 
+  position: relative;
+  top:8rpx;
+  left:5rpx;
+  width: 250rpx;
+}
+
+.lockremind{
+  color: #444444;
+  font-weight: bold;
+  font-size: 30rpx;
+  margin-left: 27rpx;
+}
+
+.command-button3{
+  display: flex; /* 使用 flexbox */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 横向居中内容 */
+  width: calc(100% - 300rpx);
+  margin-top: 40rpx;
+  height: 100rpx;
+  border-radius:40rpx;
+  background-color: #99BBFF;
+}
+
+.starttittle{
+  color: white;
+  font-weight: bold;
+  font-size: 33rpx;
+}
+
+

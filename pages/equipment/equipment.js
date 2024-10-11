@@ -2,11 +2,12 @@ Page({
   data: {
     devices: [],
     services: [],
-    characteristics: []
+    characteristics: [],
+    price:"8",
   },
 
   onLoad: function() {
-    this.loadDevices();
+
   },
 
   onReady:function(){
@@ -87,7 +88,7 @@ Page({
           });
           
           wx.navigateTo({
-            url: `/pages/bluetooth/bluetooth?deviceId=${deviceId}&serviceId=${serviceId}&characteristicId1=${characteristicIds[0]}&characteristicId2=${characteristicIds[1]}&name=${name}&signalStrength=${signalStrength}`
+            url: `/pages/bluetooth/bluetooth?deviceId=${deviceId}&serviceId=${serviceId}&characteristicId1=${characteristicIds[0]}&characteristicId2=${characteristicIds[1]}&name=${name}&signalStrength=${signalStrength}&price=${this.data.price}`
           });
         }
       }
@@ -116,7 +117,11 @@ Page({
     if (!characteristics.some(characteristic => characteristic.characteristicId === characteristicId)) {
       characteristics.push(characteristicInfo);
     }
-  }
+  },
+
+  //---------------------进入的刷新动画----------------
+
+  
 });
 
 

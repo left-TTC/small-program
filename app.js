@@ -27,23 +27,12 @@ App({
   },
 
   bluetoothFind: function() {
-    let isLoading = true; // 控制加载提示的状态
     wx.startBluetoothDevicesDiscovery({
       allowDuplicatesKey: true,
-      interval: 3000,
+      interval: 1000,
       powerLevel: 0,
       services: ['E0FF'],                             //only find XLBLE
       success: () => {
-        if (isLoading) { // 如果是第一次找到设备
-          wx.showLoading({
-            title: '正在寻找设备',
-            mask: true
-          });
-          isLoading = false; // 更新状态
-        }
-        setTimeout(() => {
-          wx.hideLoading();
-        }, 3000);
 
         wx.onBluetoothDeviceFound((res) => {
         const foundDeviceIDs = res.devices.map(device => device.deviceId);

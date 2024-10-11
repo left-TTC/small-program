@@ -1,0 +1,110 @@
+.pages{
+  background: linear-gradient(to bottom, #99BBFF, white);
+  padding: 2px;
+  height: 250px;
+}
+
+.speed{
+  height: 500rpx;
+  width: 500rpx;
+  border-radius:50% ;
+  background-color: #00FFFF;
+  position: relative;
+  top:250rpx;
+  left: 180rpx;
+  display: flex;
+  flex-direction: column;
+  transform: rotate(90deg);
+}
+
+.speedbig{
+  color: white;
+  font-weight: bold;
+  font-size: 250rpx;
+  position: relative;
+  left:100rpx;
+  top:30rpx;
+}
+
+.speedsmall{
+  color: white;
+  font-weight: bold;
+  font-size: 40rpx;
+  font-style: italic;
+  position: relative;
+  left:200rpx;
+}
+
+.onspeed{
+  margin-top: -70rpx;
+  margin-right: 30rpx;
+  display: flex;
+  flex-direction: column;
+  transform: rotate(90deg);
+}
+
+.signalima{
+  height: 80rpx;
+  width: 100rpx;
+  position: relative;
+  right: 180rpx;
+  top: 270rpx;
+}
+
+.lineon{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time{
+  position: relative;
+  right: -180rpx;
+  top: 280rpx;
+  font-size: 37rpx;
+  font-weight: bold;
+  font-style:oblique;
+}
+
+.horizontal-line{
+  height: 3px; /* 线的高度 */
+  background-color: #000000; /* 线的颜色 */
+  width: 400rpx;
+  margin: 0rpx 10rpx; 
+  position: relative;
+  top: 270rpx;
+  right: -150rpx;
+}
+
+.distance{
+  color: white;
+  font-size: 30rpx;
+  font-weight: bold;
+  font-style:oblique;
+  position: relative;
+  top:80rpx;
+  left: 290rpx;
+}
+
+.stopderiving{
+  position: relative;
+  transform: rotate(90deg);
+  top:260rpx;
+  right: 210rpx;
+}
+
+.stop-button{
+  height: 180rpx;
+  width: 180rpx;
+  border-radius: 50%;
+  background-color: #FF0000 ;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close{
+  height: 120rpx;
+  width: 120rpx;
+  margin-left: 4rpx;
+}

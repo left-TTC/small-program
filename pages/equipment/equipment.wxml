@@ -1,8 +1,28 @@
-
-  <view class="container">
-    <view wx:for="{{devices}}" wx:key="deviceID" bindtap="goToBluetooth" data-device="{{item}}" class="device-item">
-      <text>{{item.name}}</text>
+<view class = "pages">
+  <view wx:if="{{devices.length != 0}}" class="equipment-container">
+    <view class = "tittlestyle">
+      <image class ="topimage" src = "/image/tittle.png"></image>
+      <text class = "tittle">挑选一个最适合您的设备吧</text>
+    </view>
+    <view wx:for="{{devices}}" wx:key="deviceID" data-device="{{item}}" class="device-item">
+      <view class = "itemStyle">
+        <view class = "device">
+          <text class = "itemchar">{{item.name}}</text>
+          <text class = "price">{{price}}元/小时</text>
+        </view>
+        <button class = "connect-button" bindtap = "goToBluetooth"data-device="{{item}}"><image class = "connectimage" src = "/image/blue.png"></image></button>
+      </view>
+    </view>
+    <view class = "bostyle">
+        <image class ="boimage" src = "/image/bottom.png"></image>
+        <text class = "bottom">没有更多设备了，到别处找找吧~</text>
     </view>
   </view>
-
+  <view wx:if="{{devices.length === 0}}" class="equipment-container">
+    <view class="blank-item">
+      <image class = "failfind" src = "/image/fail-found.png"></image>
+      <text class = "blankStyle">周围没有可以使用的设备，到别处找找吧</text>
+    </view>
+  </view>
+</view>
   

@@ -1,0 +1,20 @@
+<!--pages/index/index.wxml-->
+
+<view class ="pages">
+  <view class = "useway">
+    <view class = "section">
+      <view class = "text-section">
+        <text class = "big">扫码用车</text>
+        <text class = "small">安全快捷,立即出行</text>
+      </view>
+        <button class = "scan-button" bindtap = "scanQRcode"><image class = "scanimage" src = "/image/scan.png"></image>扫一扫</button>
+    </view>
+    <view class = "section">
+      <view class = "text-section">
+        <text class = "big">周围可用</text>
+        <text class = "small">蓝牙寻找,出行无忧</text>
+      </view>
+        <button class = "find-button" bindtap = "gotoequipment">立即寻找</button>
+    </view>
+  </view>
+</view>

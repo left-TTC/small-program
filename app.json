@@ -1,5 +1,6 @@
 {
-  "pages":[                
+  "pages":[     
+    "pages/index/index",           
     "pages/equipment/equipment",
     "pages/bluetooth/bluetooth",
     "pages/instrumentBoard/instrumentBoard",
@@ -10,20 +11,17 @@
 
   "window": {
     "backgroundTextStyle":"dark",
-    "navigationBarBackgroundColor":"#fff",
-    "navigationBarTitleText":"smartbike bluetooth command send and receive",
-    "navigationBarTextStyle":"black"      
+    "navigationBarTitleText": "bike",
+    "navigationBarBackgroundColor": "#99BBFF", 
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#99BBFF"    
   },
 
   "tabBar": {
     "list": [
       {
-        "pagePath": "pages/equipment/equipment",
-        "text": "主页"
-      },
-      {
-        "pagePath": "pages/scan/scan",
-        "text": "扫描二维码"
+        "pagePath": "pages/index/index",
+        "text": "首页"
       },
       {
         "pagePath": "pages/user/user",
@@ -34,10 +32,8 @@
   
 
   "permission":{
-    "scope":{
       "bluetooth":{
         "desc":"需要蓝牙权限来寻找我们的设备"
       }
-    }
   }
 }

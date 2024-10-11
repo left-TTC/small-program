@@ -15,9 +15,14 @@ Page({
     rotate_Counter: 0,                //用于接收传递过来的轮转数
     lastlyrotate_Counter:0,
     itinerary:0,
-    speed:0,
+    speed:'',
     time:0,
     timer:null,
+    latitude:0,
+    longtitude:0,
+    //markes:[],
+    //searchkeyWord:'',
+
   },
 
   /**
@@ -38,6 +43,7 @@ Page({
       }
     });
     this.listentoBlue();
+    //this.checkLocationAuth();
   },
 
   /**
@@ -45,7 +51,7 @@ Page({
    */
   onReady() {
     wx.setNavigationBarTitle({
-      title:"仪表盘",
+      title:this.data.device.name,
     }); 
   },
 
@@ -53,6 +59,13 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
+    wx.showModal({
+      title: '提示',
+      content: '将屏幕横向更好使用哦',
+      showCancel: false,
+      confirmText: '好', 
+    });
+    //this.locationInterval = setInterval(this.updateLocation, 5000);
     this.updateSpeed();
     this.updateItinerary();
   },
@@ -61,7 +74,10 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide() {
-
+    wx.setScreenOrientation({
+      screenOrientation: 'portrait', // 竖屏
+    });
+    //clearInterval(this.locationInterval); 
   },
 
   /**
@@ -212,15 +228,22 @@ listentoBlue:function(){
   itineraryCalculate:function(data){
     const calculatedValue = (3.14 * data * 0.4) / 1000;
     this.setData({
-      itinerary:parseFloat(calculatedValue.toFixed(2))
+      itinerary:parseFloat(calculatedValue.toFixed(1))
     });
   },
 
   speedCalculate:function(data1,data2){
     const calculatedValue = ((data1-data2)*3.14*0.4)/0.3/3.6;
+    const speed = Math.ceil(calculatedValue); // 向上取整
+
+    const speed1 = Math.floor(speed / 10); // 十位数
+    const speed2 = speed % 10; // 个位数
+
+    const combinedSpeed = `${speed1}${speed2}`;
+
     this.setData({
-      speed:Math.ceil(calculatedValue)       //向上取整，安全第一
-    });
+      speed:combinedSpeed
+     });
   },
 
   updateSpeed:function(){                    //每0.3s更新一次速度
@@ -267,5 +290,85 @@ listentoBlue:function(){
       timer:null
     });
   },
+//----------------导航部分------------------
+// onInput(event){
+//   this.setData({
+//     searchkeyWord:event.detail.value
+//   });
+// },
+
+/*onSearch() {
+  const { searchKeyword } = this.data;
+
+  wx.request({
+    url: 'https://api.map.baidu.com/place/v2/search', // 这里以百度地图为例
+    method: 'GET',
+    data: {
+      query: searchKeyword,
+      location: `${this.data.latitude},${this.data.longitude}`, // 当前用户位置
+      radius: 50000, // 搜索半径 50km
+      output: 'json',
+      ak: '你的百度地图AK' // 替换成你的API密钥
+    },
+    success: (res) => {
+      if (res.data.results && res.data.results.length > 0) {
+        const markers = res.data.results.map((item, index) => ({
+          id: index + 1,
+          latitude: item.location.lat,
+          longitude: item.location.lng,
+          iconPath: '/resources/marker.png', // 自定义标记图标路径
+          width: 50,
+          height: 50,
+          title: item.name // 标记的标题
+        }));
+        this.setData({ markers });
+      } else {
+        wx.showToast({
+          title: '未找到相关地点',
+          icon: 'none'
+        });
+      }
+    }
+  });
+},*/
+
+  // updateLocation() {
+  //   wx.getLocation({
+  //     type: 'gcj02', // 火星坐标系
+  //     success: (res) => {
+  //       this.setData({
+  //         latitude: res.latitude,
+  //         longitude: res.longitude,
+  //       });
+  //     },
+  //   });
+  // },
+
+  // checkLocationAuth() {
+  //   wx.getSetting({
+  //     success: (res) => {
+  //       // 判断用户是否授权定位
+  //       if (res.authSetting['scope.userLocation']) {
+  //         this.updateLocation(); // 权限已授权，获取位置
+  //         this.locationInterval = setInterval(this.updateLocation, 5000); // 每5秒更新位置
+  //       } else {
+  //         wx.authorize({
+  //           scope: 'scope.userLocation',
+  //           success: () => {
+  //             this.updateLocation(); // 用户授权后获取位置
+  //             this.locationInterval = setInterval(this.updateLocation, 5000); // 每5秒更新位置
+  //           },
+  //           fail: () => {
+  //             wx.showToast({
+  //               title: '请授权位置信息以继续使用该功能',
+  //               icon: 'none',
+  //             });
+  //           }
+  //         });
+  //       }
+  //     }
+  //   });
+  // },
+
 
 })
