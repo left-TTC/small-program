@@ -2,7 +2,6 @@
 Page({
   data: {
     devices: {},
-    receivedData: '',
     deviceId: '',
     serviceId: '',
     characteristicId1: '',
@@ -18,8 +17,9 @@ Page({
     speed:'',
     time:0,
     timer:null,
-    latitude:0,
-    longtitude:0,
+    price:'',
+    batteryPower:'',
+    mileageavailable:'',
     //markes:[],
     //searchkeyWord:'',
 
@@ -29,21 +29,23 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength } = options;
-    const app = getApp();
+    const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength, batteryPower, price, mileageavailable, Batterylockstate } = options;
     this.setData({
       deviceId: deviceId,
       serviceId: serviceId,
       characteristicId1: characteristicId1,                //write 
       characteristicId2: characteristicId2,                //notify
-      Batterylockstate: app.globalData.batterylockstate,
+      batteryPower:batteryPower,
+      Batterylockstate:Batterylockstate,
+      price:price,
+      mileageavailable:mileageavailable,
       device: {
         name: name,
-        signalStrength: signalStrength
+        signalStrength: Number(signalStrength)
       }
     });
+    console.log("Current Batterylockstate00:", this.data.Batterylockstate);
     this.listentoBlue();
-    //this.checkLocationAuth();
   },
 
   /**
@@ -59,13 +61,6 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    wx.showModal({
-      title: '提示',
-      content: '将屏幕横向更好使用哦',
-      showCancel: false,
-      confirmText: '好', 
-    });
-    //this.locationInterval = setInterval(this.updateLocation, 5000);
     this.updateSpeed();
     this.updateItinerary();
   },
@@ -74,10 +69,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide() {
-    wx.setScreenOrientation({
-      screenOrientation: 'portrait', // 竖屏
-    });
-    //clearInterval(this.locationInterval); 
+  
   },
 
   /**
@@ -162,8 +154,15 @@ listentoBlue:function(){
     if(data.includes('ready')){
       this.startTimer();                        //如果回应已经开始供电，则开始计时
     }
-    const app = getApp();
-    app.globalData.batterylockstate = this.data.Batterylockstate
+    if (data.includes('BV:')) {
+      const match = data.match(/BV:\s*(\d+(\.\d+)?)/);
+      if (match) {
+        const Power = match[1];  
+        this.setData({
+          batteryPower: Power
+        });
+      }
+    }
   },
 
   sendCommand: function(event) {  
@@ -220,7 +219,7 @@ listentoBlue:function(){
 
   settleAccount:function(){
     wx.navigateTo({
-      url:`/pages/account/account?itinerary=${this.data.itinerary}&time=${this.data.time}`
+      url:`/pages/account/account?itinerary=${this.data.itinerary}&time=${this.data.time}&deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&price=${this.data.price}&batteryPower=${this.data.batteryPower}&Batterylockstate=${this.data.Batterylockstate}`
     });
   },
 
@@ -252,7 +251,6 @@ listentoBlue:function(){
       const data2 = this.data.lastlyrotate_Counter;
 
       this.speedCalculate(data1,data2);
-      console.log(this.data.speed);
     },300);
   },
 
@@ -265,7 +263,6 @@ listentoBlue:function(){
       const data = this.data.rotate_Counter;
 
       this.itineraryCalculate(data);
-      console.log(this.data.itinerary);
     },5000);
   },
 
@@ -291,84 +288,7 @@ listentoBlue:function(){
     });
   },
 //----------------导航部分------------------
-// onInput(event){
-//   this.setData({
-//     searchkeyWord:event.detail.value
-//   });
-// },
 
-/*onSearch() {
-  const { searchKeyword } = this.data;
-
-  wx.request({
-    url: 'https://api.map.baidu.com/place/v2/search', // 这里以百度地图为例
-    method: 'GET',
-    data: {
-      query: searchKeyword,
-      location: `${this.data.latitude},${this.data.longitude}`, // 当前用户位置
-      radius: 50000, // 搜索半径 50km
-      output: 'json',
-      ak: '你的百度地图AK' // 替换成你的API密钥
-    },
-    success: (res) => {
-      if (res.data.results && res.data.results.length > 0) {
-        const markers = res.data.results.map((item, index) => ({
-          id: index + 1,
-          latitude: item.location.lat,
-          longitude: item.location.lng,
-          iconPath: '/resources/marker.png', // 自定义标记图标路径
-          width: 50,
-          height: 50,
-          title: item.name // 标记的标题
-        }));
-        this.setData({ markers });
-      } else {
-        wx.showToast({
-          title: '未找到相关地点',
-          icon: 'none'
-        });
-      }
-    }
-  });
-},*/
-
-  // updateLocation() {
-  //   wx.getLocation({
-  //     type: 'gcj02', // 火星坐标系
-  //     success: (res) => {
-  //       this.setData({
-  //         latitude: res.latitude,
-  //         longitude: res.longitude,
-  //       });
-  //     },
-  //   });
-  // },
-
-  // checkLocationAuth() {
-  //   wx.getSetting({
-  //     success: (res) => {
-  //       // 判断用户是否授权定位
-  //       if (res.authSetting['scope.userLocation']) {
-  //         this.updateLocation(); // 权限已授权，获取位置
-  //         this.locationInterval = setInterval(this.updateLocation, 5000); // 每5秒更新位置
-  //       } else {
-  //         wx.authorize({
-  //           scope: 'scope.userLocation',
-  //           success: () => {
-  //             this.updateLocation(); // 用户授权后获取位置
-  //             this.locationInterval = setInterval(this.updateLocation, 5000); // 每5秒更新位置
-  //           },
-  //           fail: () => {
-  //             wx.showToast({
-  //               title: '请授权位置信息以继续使用该功能',
-  //               icon: 'none',
-  //             });
-  //           }
-  //         });
-  //       }
-  //     }
-  //   });
-  // },
 
 
 })

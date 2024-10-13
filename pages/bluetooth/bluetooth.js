@@ -7,27 +7,24 @@ Page({
     characteristicId1: '',
     characteristicId2: '',
     Batterylockstate:-1,
-    price:'',
-    battery:"83",
-    mileageavailable:"40.3",
+    price:'10coins',
+    mileageavailable:"检测中",
     device: {
       name: '',
       signalStrength: 0
     },
     signalUpdateInterval: null ,// 存储定时器ID
+    batteryPower:'检测中',
 },
 
 //------------------------------onload-------------------------------
   onLoad: function(options) {
-    console.log("no");
     const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength,price } = options;
-    const app = getApp();
     this.setData({
       deviceId: deviceId,
       serviceId: serviceId,
       characteristicId1: characteristicId1,                //write 
       characteristicId2: characteristicId2,                //notify
-      Batterylockstate: app.globalData.batterylockstate,
       price:price,
       device: {
         name: name,
@@ -45,10 +42,7 @@ Page({
 },
 
 onShow:function(){
-  const app = getApp();
-  this.setData({
-    Batterylockstate:app.globalData.batterylockstate
-  })
+
 },
 
 onHide:function(){
@@ -56,7 +50,7 @@ onHide:function(){
 },
 
 onUnload:function(){
-  console.log("yes");
+
 },
 
 
@@ -128,7 +122,7 @@ getDeviceRSSI: function() {
 
   gotoInstrumentboard: function() {
     wx.navigateTo({
-      url: `/pages/instrumentBoard/instrumentBoard?deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&name=${this.data.device.name}&signalStrength=${this.data.device.signalStrength}`
+      url: `/pages/instrumentBoard/instrumentBoard?deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&name=${this.data.device.name}&signalStrength=${this.data.device.signalStrength}&batteryPower=${this.data.batteryPower}&mileageavailable=${this.data.mileageavailable}&price=${this.data.price}&Batterylockstate=${this.data.Batterylockstate}`
     });
   },
 
@@ -181,16 +175,37 @@ stringToBuffer: function(str) {
 judgelisten:function(data){
   if(data.includes('battery2')){
     this.setData({
-      Batterylockstate:0
+      Batterylockstate:0          //意味着此时锁是关着的
     })
   }
-  else if(data.includes('battery1')){
+  else if(data.includes('battery1')){         
     this.setData({
-      Batterylockstate:1
+      Batterylockstate:1          //恰恰相反
     })
   }
-  const app = getApp();
-  app.globalData.batterylockstate = this.data.Batterylockstate
+  else if(data.includes('battery3')){         
+    wx.showToast({
+      title: '开锁失败了哦，找找有什么问题吧',
+      icon: 'none',
+      duration: 1000,
+    });
+  }
+  else if(data.includes('battery4')){         
+    wx.showToast({
+      title: '关锁失败了哦，再试一次',
+      icon: 'none',
+      duration: 1000,
+    });
+  }
+  if (data.includes('BV:')) {
+    const match = data.match(/BV:\s*(\d+(\.\d+)?)/);
+    if (match) {
+      const Power = match[1];  
+      this.setData({
+        batteryPower: Power
+      });
+    }
+  }
 },
 
 });

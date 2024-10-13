@@ -22,7 +22,15 @@
         </view>
       </view>
       <view class="horizontal-line"></view>
-      <text class = "distance">里程:{{itinerary}}Km</text>
+      <text class = "distance">{{itinerary}}Km</text>
+    </view>
+    <view class ="showbattery">
+      <image class="batterypowershow" src = "/image/1.png"></image>
+      <text class = "powertittle">{{batteryPower}}</text>
+    </view>
+    <view class = "dis">
+      <image class = "bike" src="/image/bike.png"></image>
+      <text class="long">可行驶:{{mileageavailable}}</text>
     </view>
   </view>
   <view class = "stopderiving">

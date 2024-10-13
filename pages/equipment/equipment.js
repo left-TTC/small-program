@@ -3,7 +3,7 @@ Page({
     devices: [],
     services: [],
     characteristics: [],
-    price:"8",
+    price:"10coins",
   },
 
   onLoad: function() {

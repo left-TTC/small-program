@@ -1,9 +1,6 @@
 // app.js
 App({
   devices: [],                     // define devices array 
-  globalData:{
-    batterylockstate:-1,
-  },
 
   onLaunch: function() {
     this.initializeBluetooth();         // find BLE device when launch
@@ -29,7 +26,7 @@ App({
   bluetoothFind: function() {
     wx.startBluetoothDevicesDiscovery({
       allowDuplicatesKey: true,
-      interval: 1000,
+      interval: 3000,
       powerLevel: 0,
       services: ['E0FF'],                             //only find XLBLE
       success: () => {
