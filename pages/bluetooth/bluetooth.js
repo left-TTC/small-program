@@ -15,6 +15,8 @@ Page({
     },
     signalUpdateInterval: null ,// 存储定时器ID
     batteryPower:'检测中',
+    batteryPowerPercentage:'检测中',
+    userKey:'',
 },
 
 //------------------------------onload-------------------------------
@@ -29,10 +31,13 @@ Page({
       device: {
         name: name,
         signalStrength: signalStrength
-      }
+      },
+      userKey: getApp().globalData.userKey,
     });
     this.listentoBlue();
-    this.startSignalStrengthUpdate();         
+    this.startSignalStrengthUpdate();  
+    this.sendSecrectCommand();
+    console.log(userKey);       
  },
 
  onReady:function(){
@@ -49,8 +54,10 @@ onHide:function(){
 
 },
 
-onUnload:function(){
-
+onUnload: function() {
+  wx.closeBLEConnection({
+    deviceId: this.data.deviceId,
+  });
 },
 
 
@@ -122,7 +129,7 @@ getDeviceRSSI: function() {
 
   gotoInstrumentboard: function() {
     wx.navigateTo({
-      url: `/pages/instrumentBoard/instrumentBoard?deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&name=${this.data.device.name}&signalStrength=${this.data.device.signalStrength}&batteryPower=${this.data.batteryPower}&mileageavailable=${this.data.mileageavailable}&price=${this.data.price}&Batterylockstate=${this.data.Batterylockstate}`
+      url: `/pages/instrumentBoard/instrumentBoard?deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&name=${this.data.device.name}&signalStrength=${this.data.device.signalStrength}&batteryPower=${this.data.batteryPower}&mileageavailable=${this.data.mileageavailable}&price=${this.data.price}&Batterylockstate=${this.data.Batterylockstate}&batteryPowerPercentage=${this.data.batteryPowerPercentage}`
     });
   },
 
@@ -204,8 +211,62 @@ judgelisten:function(data){
       this.setData({
         batteryPower: Power
       });
+      this.doTobatteryPower(Power);
     }
   }
 },
+
+doTobatteryPower:function(data){
+  if (data){
+    const powerNum = parseFloat(data);
+    if(powerNum ){
+      let percentage;
+      if(powerNum <= 53.4 && powerNum >= 45){
+        percentage = Math.floor(100 * (powerNum - 45) / (53.4 - 45));
+      }
+      else if(powerNum > 53.4){
+        percentage = 100
+      }
+      else{
+        percentage = 0
+      }
+      this.setData({
+        batteryPowerPercentage:percentage
+      });
+    }
+  }
+},
+//-----------------------------------------
+generatePrivateKey:function(){
+  const { keccak256 } = require('js-sha3');
+  const elliptic = require('elliptic');                 //引入库
+  const keccakUse = `${this.data.userkey}`;       //结合时间戳和用户名
+
+  const privateKeyHex = keccak256(keccakUse);     //得到私钥
+  console.log('Private Key:', privateKeyHex);
+
+  const ec = new elliptic.ec('secp256k1');       //选择与以太坊一样的secp256k1椭圆曲线
+  const keyPair = ec.keyFromPrivate(privateKeyHex);     //生成密钥对
+  const publicKeyHex = keyPair.getPublic('hex');     //得到公钥
+  console.log('Public Key:', publicKeyHex);
+},
+
+sendSecrectCommand:function(){
+  const data = {
+    Address: '0x0e498a179f313918e4a666d55f680a7647101353',
+    Message: 'yesss',
+    SignatureHash: '0xdae3bf260bcdef02bf0c118da35e433e92f2c01c57b5297f66e1b6ac1be832ea51294b6fb88beec0623a6832a8c99c37e10ecae91d54a8df4ba873521d9546041c',
+    time: '12344565'
+  };
+
+  const jsonString = JSON.stringify(data);
+  console.log(jsonString);
+  this.sendData(jsonString);
+},
+
+
+
+
+
 
 });

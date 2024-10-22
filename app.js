@@ -1,10 +1,14 @@
 // app.js
 App({
   devices: [],                     // define devices array 
+  globalData:{
+    userKey:''
+  },
 
   onLaunch: function() {
     this.initializeBluetooth();         // find BLE device when launch
   },
+  
 
 //---------------------------------------------------------------------------
   initializeBluetooth: function() {

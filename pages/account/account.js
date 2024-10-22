@@ -14,7 +14,7 @@ Page({
   },
 
   onLoad(options) {
-    const { deviceId, serviceId, characteristicId1, characteristicId2, batteryPower, price, itinerary, time, Batterylockstate } = options;
+    const { deviceId, serviceId, characteristicId1, characteristicId2, batteryPower, price, itinerary, time, Batterylockstate, batteryPowerPercentage } = options;
     this.setData({
       Batterylockstate:Number(Batterylockstate),
       deviceId:deviceId,
@@ -24,7 +24,8 @@ Page({
       batteryPower:batteryPower,
       price:price,
       itinerary:itinerary,
-      time:time
+      time:time,
+      batteryPowerPercentage:batteryPowerPercentage,
     })
     console.log("Current Batterylockstate:", this.data.Batterylockstate);
   },

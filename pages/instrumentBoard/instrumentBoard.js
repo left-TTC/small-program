@@ -29,7 +29,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength, batteryPower, price, mileageavailable, Batterylockstate } = options;
+    const { deviceId, serviceId, characteristicId1, characteristicId2, name, signalStrength, batteryPower, price, mileageavailable, Batterylockstate, batteryPowerPercentage } = options;
     this.setData({
       deviceId: deviceId,
       serviceId: serviceId,
@@ -39,12 +39,12 @@ Page({
       Batterylockstate:Batterylockstate,
       price:price,
       mileageavailable:mileageavailable,
+      batteryPowerPercentage:batteryPowerPercentage,
       device: {
         name: name,
         signalStrength: Number(signalStrength)
       }
     });
-    console.log("Current Batterylockstate00:", this.data.Batterylockstate);
     this.listentoBlue();
   },
 
@@ -161,6 +161,28 @@ listentoBlue:function(){
         this.setData({
           batteryPower: Power
         });
+        this.doTobatteryPower(Power);
+      }
+    }
+  },
+
+  doTobatteryPower:function(data){
+    if (data){
+      const powerNum = parseFloat(data);
+      if(powerNum ){
+        let percentage;
+        if(powerNum <= 53.4 && powerNum >= 45){
+          percentage = Math.floor(100 * (powerNum - 45) / (53.4 - 45));
+        }
+        else if(powerNum > 53.4){
+          percentage = 100
+        }
+        else{
+          percentage = 0
+        }
+        this.setData({
+          batteryPowerPercentage:percentage
+        });
       }
     }
   },
@@ -219,7 +241,7 @@ listentoBlue:function(){
 
   settleAccount:function(){
     wx.navigateTo({
-      url:`/pages/account/account?itinerary=${this.data.itinerary}&time=${this.data.time}&deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&price=${this.data.price}&batteryPower=${this.data.batteryPower}&Batterylockstate=${this.data.Batterylockstate}`
+      url:`/pages/account/account?itinerary=${this.data.itinerary}&time=${this.data.time}&deviceId=${this.data.deviceId}&serviceId=${this.data.serviceId}&characteristicId1=${this.data.characteristicId1}&characteristicId2=${this.data.characteristicId2}&price=${this.data.price}&batteryPower=${this.data.batteryPower}&Batterylockstate=${this.data.Batterylockstate}&batteryPowerPercentage=${this.data.batteryPowerPercentage}`
     });
   },
 
@@ -287,7 +309,6 @@ listentoBlue:function(){
       timer:null
     });
   },
-//----------------导航部分------------------
 
 
 

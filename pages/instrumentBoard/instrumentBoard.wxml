@@ -25,8 +25,22 @@
       <text class = "distance">{{itinerary}}Km</text>
     </view>
     <view class ="showbattery">
-      <image class="batterypowershow" src = "/image/1.png"></image>
-      <text class = "powertittle">{{batteryPower}}</text>
+      <view wx:if="{{batteryPowerPercentage >= 75}}">
+        <image class="batterypowershow" src = "/image/1.png"></image>
+      </view>
+      <view wx:if="{{batteryPowerPercentage >= 50 && batteryPowerPercentage < 75}}">
+        <image class="batterypowershow" src = "/image/2.png"></image>
+      </view>
+      <view wx:if="{{batteryPowerPercentage >= 25 && batteryPowerPercentage < 50}}">
+        <image class="batterypowershow" src = "/image/3.png"></image>
+      </view>
+      <view wx:if="{{batteryPowerPercentage < 25}}">
+        <image class="batterypowershow" src = "/image/4.png"></image>
+      </view>
+      <view class = "powershow">
+        <text class = "powertittle">{{batteryPower}}V</text>
+        <text class = "powertittle">{{batteryPowerPercentage}}%</text>
+      </view>
     </view>
     <view class = "dis">
       <image class = "bike" src="/image/bike.png"></image>

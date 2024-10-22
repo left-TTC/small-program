@@ -19,7 +19,7 @@
       <view class="horizontal-line"></view>
       <view class = "state">
         <text class = "price">单价:{{price}}/小时</text>
-        <text class = "battery">剩余电量:{{batteryPower}}</text>
+        <text class = "battery">剩余电量:{{batteryPower}}V  {{batteryPowerPercentage}}%</text>
         <text class = "mileage">预计可行驶:{{mileageavailable}}</text>
       </view>
     </view>

@@ -1,18 +1,18 @@
 // pages/user/user.js
 Page({
 
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    username:'',
+    userKey:'阿斯顿法国红酒看来'
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    this.generatePrivateKey("asdhjk");
+    const app = getApp();
+    app.globalData.userKey = this.data.userKey;
   },
 
   /**
@@ -62,5 +62,8 @@ Page({
    */
   onShareAppMessage() {
 
-  }
+  },
+
+
+
 })

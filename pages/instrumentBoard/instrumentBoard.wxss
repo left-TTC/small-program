@@ -117,10 +117,17 @@
   margin-left: 30rpx;
 }
 
+.powershow{
+  display: flex;
+  flex-direction: column;
+}
+
 .powertittle{
-  font-size: 35rpx;
+  font-size: 28rpx;
   font-weight: bold;
-  margin-left: 10rpx;
+  position: relative;
+  left: 10rpx;
+  bottom: 20rpx;
 }
 
 .showbattery{
@@ -128,7 +135,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  bottom: 150rpx;
+  bottom: 120rpx;
   right: 80rpx;
   width: calc(100% - 430rpx);
 }
