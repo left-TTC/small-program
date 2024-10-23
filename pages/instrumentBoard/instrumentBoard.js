@@ -139,16 +139,18 @@ listentoBlue:function(){
         Batterylockstate:1
       })
     }
-    if(data.includes('Mileage:')){               //将轮转数提取出来
+    if(data.includes('R:')){               //将轮转数提取出来
+      console.log('have')
       this.setData({
         lastlyrotate_Counter:this.data.rotate_Counter,   //保留上一次的值
       });
-      const mileageMatch = data.match(/Mileage:\s*(\d+)/);
+      const mileageMatch = data.match(/R:\s*(\d+)/);
       if (mileageMatch) {
         const mileage = parseInt(mileageMatch[1], 10);
         this.setData({
           rotate_Counter: mileage
         });
+        console.log(this.data.rotate_Counter);
       }
     }
     if(data.includes('ready')){

@@ -35,9 +35,7 @@ Page({
       userKey: getApp().globalData.userKey,
     });
     this.listentoBlue();
-    this.startSignalStrengthUpdate();  
-    this.sendSecrectCommand();
-    console.log(userKey);       
+    this.startSignalStrengthUpdate();        
  },
 
  onReady:function(){
@@ -237,32 +235,6 @@ doTobatteryPower:function(data){
   }
 },
 //-----------------------------------------
-generatePrivateKey:function(){
-  const { keccak256 } = require('js-sha3');
-  const elliptic = require('elliptic');                 //引入库
-  const keccakUse = `${this.data.userkey}`;       //结合时间戳和用户名
-
-  const privateKeyHex = keccak256(keccakUse);     //得到私钥
-  console.log('Private Key:', privateKeyHex);
-
-  const ec = new elliptic.ec('secp256k1');       //选择与以太坊一样的secp256k1椭圆曲线
-  const keyPair = ec.keyFromPrivate(privateKeyHex);     //生成密钥对
-  const publicKeyHex = keyPair.getPublic('hex');     //得到公钥
-  console.log('Public Key:', publicKeyHex);
-},
-
-sendSecrectCommand:function(){
-  const data = {
-    Address: '0x0e498a179f313918e4a666d55f680a7647101353',
-    Message: 'yesss',
-    SignatureHash: '0xdae3bf260bcdef02bf0c118da35e433e92f2c01c57b5297f66e1b6ac1be832ea51294b6fb88beec0623a6832a8c99c37e10ecae91d54a8df4ba873521d9546041c',
-    time: '12344565'
-  };
-
-  const jsonString = JSON.stringify(data);
-  console.log(jsonString);
-  this.sendData(jsonString);
-},
 
 
 
