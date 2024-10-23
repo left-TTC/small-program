@@ -1,9 +1,8 @@
 {
   "pages":[     
-    "pages/index/index",           
+    "pages/instrumentBoard/instrumentBoard",           
     "pages/equipment/equipment",
     "pages/bluetooth/bluetooth",
-    "pages/instrumentBoard/instrumentBoard",
     "pages/user/user",
     "pages/account/account"
   ],
@@ -19,8 +18,12 @@
   "tabBar": {
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "首页"
+        "pagePath": "pages/equipment/equipment",
+        "text": "连接"
+      },
+      {
+        "pagePath": "pages/instrumentBoard/instrumentBoard",
+        "text": "仪表盘"
       },
       {
         "pagePath": "pages/user/user",

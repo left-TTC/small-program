@@ -1,53 +1,107 @@
 <!--pages/instrumentBoard/instrumentBoard.wxml-->
 <view class="pages">
-  <view class = "n">
-    <view class = "speed">
-      <text class = "speedbig">{{speed}}</text>
-      <text class = "speedsmall">Km/h</text>
-    </view>
-    <view class = "onspeed">
-      <view class = "lineon">
-        <text class = "time">用时:{{time}}min</text>
-        <view wx:if = "{{device.signalStrength > -65}}" class = "signal">
-          <image class = "signalima" src = "/image/good.png"></image>
+  <view class="hide">
+    <view wx:if="{{bikelock == 1}}" class="1">
+      <view class = "n">
+        <view class = "speed">
+          <text class = "speedbig">{{rotate_Counter}}</text>
+          <text class = "speedsmall">Km/h</text>
         </view>
-        <view wx:if = "{{device.signalStrength <= -65 && device.signalStrength>-75}}" class = "signal">
-          <image class = "signalima" src = "/image/high.png"></image>
+        <view class = "onspeed">
+          <view class = "lineon">
+            <text class = "time">用时:{{time}}min</text>
+            <view wx:if = "{{device.signalStrength > -65}}" class = "signal">
+              <image class = "signalima" src = "/image/good.png"></image>
+            </view>
+            <view wx:if = "{{device.signalStrength <= -65 && device.signalStrength>-75}}" class = "signal">
+              <image class = "signalima" src = "/image/high.png"></image>
+            </view>
+            <view wx:if = "{{device.signalStrength <= -75 && device.signalStrength>-80}}" class = "signal">
+              <image class = "signalima" src = "/image/middle.png"></image>
+            </view>
+            <view wx:if = "{{device.signalStrength <= -80}}" class = "signal">
+              <image class = "signalima" src = "/image/low.png"></image>
+            </view>
+          </view>
+          <view class="horizontal-line"></view>
+          <text class = "distance">{{itinerary}}Km</text>
         </view>
-        <view wx:if = "{{device.signalStrength <= -75 && device.signalStrength>-80}}" class = "signal">
-          <image class = "signalima" src = "/image/middle.png"></image>
+        <view class ="showbattery">
+          <view wx:if="{{batteryPowerPercentage >= 75}}">
+            <image class="batterypowershow" src = "/image/1.png"></image>
+          </view>
+          <view wx:if="{{batteryPowerPercentage >= 50 && batteryPowerPercentage < 75}}">
+            <image class="batterypowershow" src = "/image/2.png"></image>
+          </view>
+          <view wx:if="{{batteryPowerPercentage >= 25 && batteryPowerPercentage < 50}}">
+            <image class="batterypowershow" src = "/image/3.png"></image>
+          </view>
+          <view wx:if="{{batteryPowerPercentage < 25}}">
+            <image class="batterypowershow" src = "/image/4.png"></image>
+          </view>
+          <view class = "powershow">
+            <text class = "powertittle">{{batteryPower}}V</text>
+            <text class = "powertittle">{{batteryPowerPercentage}}%</text>
+          </view>
         </view>
-        <view wx:if = "{{device.signalStrength <= -80}}" class = "signal">
-          <image class = "signalima" src = "/image/low.png"></image>
+        <view class = "dis">
+          <image class = "bike" src="/image/bike.png"></image>
+          <text class="long">可行驶:{{mileageavailable}}</text>
         </view>
       </view>
-      <view class="horizontal-line"></view>
-      <text class = "distance">{{itinerary}}Km</text>
+      <text class = "separator-line">——————·关锁只需按下坐垫即可·——————</text>
+      <view class = "batterystate">
+      <view class = "lockshow">
+      <view class = "batteryimagesituation">
+        <view wx:if="{{Batterylockstate === -1}}">
+          <image class= "findimage" src="/image/finding.png" ></image>
+        </view>
+        <view wx:if="{{Batterylockstate === 0}}">
+          <image class= "lockimage" src="/image/lockoff.png" ></image>
+        </view>
+        <view wx:if="{{Batterylockstate === 1}}">
+          <image class= "lockimage" src="/image/lockon.png" ></image>
+        </view>
+      </view>
+      <text class = "batterytittle">状态</text>
+      </view>
+      <view class = "twobutton">
+        <view class = "HH">
+          <button class="command-button1" bindtap="sendCommand" data-command="batterylock$"><image class = "on" src = "/image/on.png"></image></button>
+          <text class = "lockremind">开锁</text>
+        </view>
+      </view>
     </view>
-    <view class ="showbattery">
-      <view wx:if="{{batteryPowerPercentage >= 75}}">
-        <image class="batterypowershow" src = "/image/1.png"></image>
-      </view>
-      <view wx:if="{{batteryPowerPercentage >= 50 && batteryPowerPercentage < 75}}">
-        <image class="batterypowershow" src = "/image/2.png"></image>
-      </view>
-      <view wx:if="{{batteryPowerPercentage >= 25 && batteryPowerPercentage < 50}}">
-        <image class="batterypowershow" src = "/image/3.png"></image>
-      </view>
-      <view wx:if="{{batteryPowerPercentage < 25}}">
-        <image class="batterypowershow" src = "/image/4.png"></image>
-      </view>
-      <view class = "powershow">
-        <text class = "powertittle">{{batteryPower}}V</text>
-        <text class = "powertittle">{{batteryPowerPercentage}}%</text>
+    <view wx:if="{{ifConnect == 1}}">
+      <view class = "stopderiving">
+        <button class ="stop-button" bindtap="settleAccountAndsendCommand" data-command="unbikelock$"><image class = "close" src = "/image/close.png"></image></button>
       </view>
     </view>
-    <view class = "dis">
-      <image class = "bike" src="/image/bike.png"></image>
-      <text class="long">可行驶:{{mileageavailable}}</text>
+    <view wx:if="{{ifConnect == 0}}">
+      <view class = "stopderiving">
+        <button class ="stop-button2" bindtap="startdrive" data-command="bikelock$"><image class = "close1" src = "/image/start.png"></image></button>
+      </view>
     </view>
-  </view>
-  <view class = "stopderiving">
-    <button class ="stop-button" bindtap="settleAccountAndsendCommand" data-command="unbikelock$"><image class = "close" src = "/image/close.png"></image></button>
+    <button class="exit" bindtap="exit"><text class = "ee">退出</text></button>
+    </view>
+  <view wx:if="{{bikelock == 0}}" class="0">
+      <view class = "n">
+        <view class = "unspeed">
+          <text class = "speedbig">00</text>
+          <text class = "speedsmall">Km/h</text>
+        </view>
+        <view class = "onspeed">
+          <view class = "lineon">
+          <text class="nonow">尚未连接设备</text>
+          </view>
+          <view class="horizontal-line1"></view>
+          <text class = "distance">{{itinerary}}Km</text>
+        </view>
+      </view>
+      <view class = "stopderiving">
+        <button class ="stop-button1" bindtap = "showerror"><image class = "close1" src = "/image/start.png"></image></button>
+      </view>
+      <button class="exit1" bindtap="exit"><text class = "ee">退出</text></button>
+    </view>
   </view>
 </view>

@@ -7,7 +7,7 @@ Page({
   },
 
   onLoad: function() {
-
+    this.loadDevices();
   },
 
   onReady:function(){
@@ -86,9 +86,19 @@ Page({
             characteristicIds.push(characteristic.uuid);
             this.updateDeviceCharacteristics(deviceId, serviceId, characteristic.uuid);
           });
+
+          getApp().globalData.deviceInfo = {
+            deviceId,
+            serviceId,
+            characteristicId1: characteristicIds[0],
+            characteristicId2: characteristicIds[1],
+            name,
+            signalStrength,
+            price: this.data.price
+          };
           
-          wx.navigateTo({
-            url: `/pages/bluetooth/bluetooth?deviceId=${deviceId}&serviceId=${serviceId}&characteristicId1=${characteristicIds[0]}&characteristicId2=${characteristicIds[1]}&name=${name}&signalStrength=${signalStrength}&price=${this.data.price}`
+          wx.switchTab({
+            url: `/pages/instrumentBoard/instrumentBoard`
           });
         }
       }

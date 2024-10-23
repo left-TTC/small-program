@@ -96,7 +96,7 @@ Page({
               deviceId: this.data.deviceId,  // 断开蓝牙
               success: () => {
                 wx.switchTab({
-                  url: '/pages/index/index',
+                  url: '/pages/instrumentBoard/instrumentBoard',
                 });
               },
               fail: () => {
@@ -116,12 +116,12 @@ Page({
           console.log(err)
         }
       });
-    } else if (this.data.Batterylockstate === 0) {
+    } else  {
       wx.closeBLEConnection({
         deviceId: this.data.deviceId,  // 断开蓝牙
         success: () => {
           wx.switchTab({
-            url: '/pages/index/index',
+            url: '/pages/instrumentBoard/instrumentBoard',
           });
         },
         fail: () => {

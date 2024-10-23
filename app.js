@@ -1,8 +1,8 @@
 // app.js
 App({
-  devices: [],                     // define devices array 
   globalData:{
-    userKey:''
+    userKey:'',
+    devices: [],
   },
 
   onLaunch: function() {
@@ -15,7 +15,6 @@ App({
     wx.openBluetoothAdapter({          //apply for bluetooth search
       success: () => {
         this.bluetoothFind();
-        this.upstateSignalStrength();
       },
       fail: () => {    
         wx.showToast({
@@ -34,11 +33,11 @@ App({
       powerLevel: 0,
       services: ['E0FF'],                             //only find XLBLE
       success: () => {
-
+        console.log("初始化正常")
         wx.onBluetoothDeviceFound((res) => {
         const foundDeviceIDs = res.devices.map(device => device.deviceId);
         
-        this.devices = this.devices.filter(existingDevice => 
+        this.globalData.devices = this.globalData.devices.filter(existingDevice => 
           foundDeviceIDs.includes(existingDevice.deviceID)
         );
 
@@ -49,8 +48,8 @@ App({
             signalStrength: device.RSSI || 0
           };
           
-          if (!this.devices.some(existingDevice => existingDevice.deviceID === deviceInfo.deviceID)) {
-            this.devices.push(deviceInfo);
+          if (!this.globalData.devices.some(existingDevice => existingDevice.deviceID === deviceInfo.deviceID)) {
+            this.globalData.devices.push(deviceInfo);
           }
         });
 
@@ -60,33 +59,12 @@ App({
   });
 },
 
-//---------------------------------------------------------------------
-  upstateSignalStrength: function() {
-    setInterval(() => {
-      wx.getBluetoothDevices({
-        success: (res) => {
-          const devices = res.devices; // 获取所有已发现的设备
-          devices.forEach(device => {
-            const deviceInList = this.devices.find(d => d.deviceID === device.deviceId);
-            if (deviceInList) {
-              deviceInList.signalStrength = device.RSSI; // 更新信号强度
-            }
-          });
-          this.updateUI(); // 更新所有页面的 UI
-        },
-        fail: (err) => {
-          console.error('获取设备列表失败:', err);
-        }
-      });
-    }, 2000); // 每秒更新一次
-  },
-
 //----------------------------------------------------------------------
   updateUI: function() {
     const pages = getCurrentPages();
     const currentPage = pages[pages.length - 1]; // 获取当前页面
     currentPage.setData({
-      devices: this.devices // 更新当前页面的设备列表
+      devices: this.globalData.devices // 更新当前页面的设备列表
     });
   },
 

@@ -1,14 +1,19 @@
 .pages{
   background: linear-gradient(to bottom, #99BBFF, white);
-  padding: 2px;
-  height: 250px;
+  padding: 4rpx;
+  height: 500rpx
+}
+
+.hide{
+  height: 1300rpx;
+  overflow: hidden;
 }
 
 .speed{
   height: 500rpx;
   width: 500rpx;
   border-radius:50% ;
-  background-color: #00FFFF;
+  background-color: #00BBFF;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -100,7 +105,7 @@
   align-items: center;
   justify-content: space-between;
   position: relative;
-  top: 400rpx;
+  top: -160rpx;
   left: 210rpx;
 }
 
@@ -158,4 +163,178 @@
   font-weight: bold;
   margin-left: 10rpx;
 }
+
+.unspeed{
+  height: 500rpx;
+  width: 500rpx;
+  border-radius:50% ;
+  background-color: #BBFFEE;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.stop-button1{
+  height: 180rpx;
+  width: 180rpx;
+  border-radius: 50%;
+  background-color: #DDDDDD ;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  top: 580rpx;
+  left: 210rpx;
+}
+
+.nonow{
+  font-size: 37rpx;
+  font-weight: bold;
+  position: relative;
+  top: 96rpx;
+  left: 260rpx;
+}
+
+.horizontal-line1{
+  height: 3px; /* 线的高度 */
+  background-color: #000000; /* 线的颜色 */
+  width: 400rpx;
+  margin: 0rpx 10rpx; 
+  position: relative;
+  top: 100rpx;
+  right: -160rpx;
+}
+
+.close1{
+  height: 120rpx;
+  width: 120rpx;
+  margin-left: 15rpx;
+}
+
+.stop-button2{
+  height: 180rpx;
+  width: 180rpx;
+  border-radius: 50%;
+  background-color: #CCFF99 ;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  top: -160rpx;
+  left: 210rpx;
+}
+
+.separator-line{
+  color: grey;
+  opacity: 0.8;
+  position: relative;
+  left: 90rpx;
+  bottom: 90rpx;
+  font-size: 25rpx;
+}
+
+.batterystate{
+  position: relative;
+  bottom: 60rpx;
+  left: 0rpx;
+  width: 180rpx;
+  height: 500rpx;
+  background-color: #AAFFEE;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 70rpx 70rpx 0;
+}
+
+.findimage{
+  position: relative;
+  left:0rpx;
+  top:0rpx;
+  height: 120rpx;
+  width: 120rpx;
+}
+
+.lockimage{
+  position: relative;
+  top: 10rpx;
+  left:10rpx;
+  height: 120rpx;
+  width: 120rpx;
+}
+
+.on{
+  height: 80rpx;
+  width: 80rpx;
+  position: relative;
+  top:15rpx;
+  right: 8rpx;
+}
+
+.lockshow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  top: 70rpx;
+}
+
+.HH{
+  position: relative;
+  top: 140rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.batterytittle{
+  font-size: 30rpx;
+  font-weight: bold;
+  writing-mode: vertical-rl;
+}
+
+.lockremind{
+  font-size: 30rpx;
+  font-weight: bold;
+  writing-mode: vertical-rl
+}
+
+.command-button1{
+  width: 120rpx;
+  height: 120rpx;
+  border-radius:50% ;
+  background-color: 	#33CCFF;
+}
+
+.exit{
+  background-color: #AAFFEE;
+  border-radius: 40rpx 0 0 40rpx;
+  height: 150rpx;
+  width: 180rpx;
+  position: relative;
+  left: 325rpx;
+  bottom: 600rpx;
+}
+
+.ee{
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-top: 60rpx;
+  position: relative;
+  right: 30rpx;
+}
+
+.exit1{
+  background-color: #AAFFEE;
+  border-radius: 40rpx 0 0 40rpx;
+  height: 150rpx;
+  width: 180rpx;
+  position: relative;
+  left: 325rpx;
+  top: 200rpx;
+}
+
+
+
+
+
+
 

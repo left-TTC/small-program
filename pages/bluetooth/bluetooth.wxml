@@ -61,6 +61,7 @@
   <view class = "separator">
     <text class = "separator-line">——————·关锁只需按下坐垫即可·——————</text>
   </view>
+  <button class="exit" bind:tap="exitthisbike">退出</button>
   <view>
     <button class="command-button3" bindtap="sendCommandAndGoToInstrumentBoard" data-command="bikelock$"><text class = "starttittle">我已知晓，现在开始骑行</text></button>
   </view> 
