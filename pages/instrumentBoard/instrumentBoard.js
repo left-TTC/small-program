@@ -53,9 +53,7 @@ Page({
       this.startSignalStrengthUpdate();
       this.updateSpeed();
       this.updateItinerary();
-      this.setData({
-        bikelock : 1,
-      })
+      
     }
   },
 
@@ -144,6 +142,9 @@ listentoBlue:function(){
     characteristicId: this.data.characteristicId2,
     state: true,
     success: (_res) => {
+      this.setData({
+        bikelock : 1,
+      })
     },
     fail: (_err) => {
     }
