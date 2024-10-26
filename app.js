@@ -1,9 +1,6 @@
 // app.js
 App({
-  globalData:{
-    userKey:'',
-    devices: [],
-  },
+  devices: [],
 
   onLaunch: function() {
     this.initializeBluetooth();         // find BLE device when launch
@@ -31,42 +28,46 @@ App({
       allowDuplicatesKey: true,
       interval: 3000,
       powerLevel: 0,
-      services: ['E0FF'],                             //only find XLBLE
+      services: [], // 只查找特定服务的设备
       success: () => {
-        console.log("初始化正常")
-        wx.onBluetoothDeviceFound((res) => {
-        const foundDeviceIDs = res.devices.map(device => device.deviceId);
+        console.log("初始化正常");
         
-        this.globalData.devices = this.globalData.devices.filter(existingDevice => 
-          foundDeviceIDs.includes(existingDevice.deviceID)
-        );
-
-        res.devices.forEach(device => {
-          const deviceInfo = {
+        const pages = getCurrentPages();
+        const currentPage = pages[pages.length - 1];
+  
+        // 监听到设备
+        wx.onBluetoothDeviceFound((res) => {
+          const foundDevices = res.devices.map(device => ({
             deviceID: device.deviceId,
             name: device.name || "unknown device",
             signalStrength: device.RSSI || 0
-          };
-          
-          if (!this.globalData.devices.some(existingDevice => existingDevice.deviceID === deviceInfo.deviceID)) {
-            this.globalData.devices.push(deviceInfo);
-          }
+          }));
+  
+          // 确保 existingDevices 是一个数组
+          const existingDevices = Array.isArray(currentPage.data.devices) ? currentPage.data.devices : [];
+  
+          // 更新当前页面的设备列表
+          const updatedDevices = existingDevices
+            .filter(existingDevice => 
+              foundDevices.some(foundDevice => foundDevice.deviceID === existingDevice.deviceID) // 保留存在的设备
+            )
+            .concat(foundDevices.filter(foundDevice => // 添加新发现的设备
+              !existingDevices.some(existingDevice => existingDevice.deviceID === foundDevice.deviceID)
+            ));
+  
+          // 更新设备列表
+          currentPage.setData({
+            devices: updatedDevices
+          });
         });
-
-        this.updateUI();
-      });
-    }
-  });
-},
-
-//----------------------------------------------------------------------
-  updateUI: function() {
-    const pages = getCurrentPages();
-    const currentPage = pages[pages.length - 1]; // 获取当前页面
-    currentPage.setData({
-      devices: this.globalData.devices // 更新当前页面的设备列表
+      },
+      fail: () => {
+        console.log("启动蓝牙设备发现失败");
+      }
     });
   },
+
+//----------------------------------------------------------------------
 
 
 });

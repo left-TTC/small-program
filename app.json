@@ -1,10 +1,6 @@
 {
   "pages":[     
-    "pages/instrumentBoard/instrumentBoard",           
-    "pages/equipment/equipment",
-    "pages/bluetooth/bluetooth",
-    "pages/user/user",
-    "pages/account/account"
+    "pages/instrumentBoard/instrumentBoard"          
   ],
 
   "window": {
@@ -15,22 +11,6 @@
     "backgroundColor": "#99BBFF"    
   },
 
-  "tabBar": {
-    "list": [
-      {
-        "pagePath": "pages/equipment/equipment",
-        "text": "连接"
-      },
-      {
-        "pagePath": "pages/instrumentBoard/instrumentBoard",
-        "text": "仪表盘"
-      },
-      {
-        "pagePath": "pages/user/user",
-        "text": "我的"
-      }
-    ]
-  },
   
 
   "permission":{
