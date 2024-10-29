@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.js"],"names":[],"mappings":";;;;;;;AAAA;AACA;AACA","file":"index.js","sourcesContent":["\nthrow new Error('noble-hashes have no entry-point: consult README for usage');\n//# sourceMappingURL=index.js.map"]}

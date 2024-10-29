@@ -39,7 +39,7 @@
     <view class="speedBlock">
       <view class="speedBox">
         <view class="speedbigBox">
-          <text class = "speedbig">{{rotate_Counter}}</text>
+          <text class = "speedbig">{{speed}}</text>
         </view>
         <view class="speedsmallBox">
           <text class = "speedsmall">Km/h</text>
@@ -204,13 +204,88 @@
     </view>
     <view class="userList"> 
       <view class="userTap">
-        <button class="user">
+        <button class="user" bind:tap="showUserModal">
           <image class="userpage" src="/image/user.png"></image>
-          <view class="username">
+          <view class="username1">
             <text class="usertitle">主页</text>
           </view>
         </button>
       </view>
+    </view>
+  </view>
+  <view wx:if="{{showingUserModal === true}}" class="userBox">
+    <button class="leftBox" bind:tap="hideUserModal">
+    </button>
+    <view class="rightBox">
+      <view class="userBackGroud"></view>
+      <view class="UserInformationBox">
+        <view wx:if="{{ifUserLoad === false}}" class="userTrueBox">
+          <view class="userNameAndPhoto">
+            <view class="userPhoto">
+              <image class="headPhoto" src="/image/headSculpture.png"></image>
+            </view>
+            <view class="username">
+              <text class="usernametitle">未登录</text>
+            </view>
+          </view>
+          <view class="nameAndInformationLine"></view>
+          <view class="aboutUserWithNoLoad">
+            <button class="userLoad" bind:tap="userLoad">验证</button>
+            <button class="userLoad" bind:tap="userRegister">创建</button>
+          </view>
+        </view>
+        <view wx:if="{{ifUserLoad === true}}">
+          <view class="userNameAndPhoto">
+            <button wx:if="{{userPhoto === ''}}" class="userPhoto">
+              <view class="changeHeadBox">
+                <text class="headChange">点击更换</text>
+              </view>
+            </button>
+            <view wx:if="{{userPhoto != '' }}" class="userPhoto">
+              <image class="headPhoto" src="{{userPhoto}}"></image>
+            </view>
+            <view class="username">
+              <text class="usernametitle1">{{userName}}</text>
+            </view>
+            <button class="changename">
+              <image class="changenameimage" src="/image/changename.png"></image>
+            </button>
+          </view>
+          <view class="nameAndInformationLine"></view>
+          <view class="aboutUserInformationBox">
+            <button class="aBox" bind:tap="walletShow">
+              <image class="walletimage" src="/image/wallet.png"></image>
+              <text class="wallettitle">钱包</text>
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{ifLoadAction===true || ifRegisterAction===true}}" class="registerAndLoadBox">
+    <button class="upBox" bind:tap="exitRegisterOrLoad"></button>
+    <view class="downBox">
+      <view wx:if="{{ifLoadAction}}" class="loadACtion" class="loadAction">
+        
+      </view>
+      <view wx:if="{{ifRegisterAction}}" class="registerActon">
+        <view class="rememberBox">
+          <text class="RegisterText">助记词*</text>
+          <view class="inputAndJudge">
+            <input class="RegisterInput" placeholder="请输入大于10个单位的任意字符" value="{{mnemonic1}}" bindinput="onInputRegister"/>
+            <image class="ifrightimage" src="{{iconSrc1}}" ></image>
+          </view>
+        </view>
+        <view class="secretBox">
+          <text class="RegisterText">密码*</text>
+          <view class="inputAndJudge">
+            <input class="RegisterInput" placeholder="请输入6位数字密码" value="{{password1}}" bindinput="onInputPassword"/>
+            <image class="ifrightimage" src="{{iconSrc2}}" ></image>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{passwordOK === false || mnemonicOK === false}}" class="registerButton1">创建账号</view>
+      <button wx:if="{{passwordOK === true && mnemonicOK === true}}" class="registerButton" bind:tap="onRegister">创建账号</button>
     </view>
   </view>
 </view>

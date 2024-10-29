@@ -1,4 +1,7 @@
 // pages/instrumentBoard/instrumentBoard.js
+import ethers from '../../dist/ethers.js';
+import CryptoJS from '../../dist/crypto-js.js';   //aes加密
+
 Page({
   data: {
     deviceId: '',
@@ -10,10 +13,10 @@ Page({
       name: '',
       signalStrength: 70
     },
-    rotate_Counter: 88,                //用于接收传递过来的轮转数
+    rotate_Counter: 0,                //用于接收传递过来的轮转数
     lastlyrotate_Counter:0,
     itinerary:0,
-    speed:'',
+    speed:'00',
     time:0,
     timer:null,
     price:'10coins',
@@ -25,6 +28,21 @@ Page({
     devicecon:0,          //是否连接到车    
     showingModal:true,
     showingUserModal:false,        //用户界面弹窗
+    ifUserLoad:false,      //用户是否登录
+    ifRegisterAction:false,       //是否是注册行为 
+    ifLoadAction:false,          //是否是登录行为
+    mnemonic:'',//助记词
+    password:'',//密码
+    iconSrc1:'',//展示助记词格式是否正确图片的路径
+    iconSrc2:'',//展示密码格式是否正确图片的路径
+    passwordOK:false,//说明密码可以使用
+    mnemonicOK:false,//说明助记词可以使用
+    privateKey:'',//私钥，由助记词生成   ns
+    wallet:'',//钱包，相当于账户     ns
+    userName:'bikeuser',//用户名   ns
+    userPhoto:'',//用户头像     ns
+    lastlyConnectBLE:'',    //ns
+    lastlyConnectBLEID:'',//上次连接设备的名字 ns
   },
 
   /**
@@ -32,6 +50,41 @@ Page({
    */
   onLoad(options) {
     this.loadDevices();
+    this.wheatherHaveWallet();
+    this.setData({
+      ifCounldConnect: getApp().ifCounldConnect
+    });
+  },
+
+  //读取内存是否有账号
+  wheatherHaveWallet:function(){
+    const wallet = wx.getStorageSync('walletAddress');
+    if (wallet) {
+      // 如果钱包地址存在
+      console.log('钱包地址已存储:', wallet);
+      this.setData({
+        ifUserLoad:true,
+      })
+      this.updateLoadUser();
+  } else {
+      // 如果钱包地址不存在
+      console.log('没有存储钱包地址');
+      return false; // 返回 false，表示没有钱包地址
+  }
+  },
+
+  updateLoadUser:function(){
+    const encryptPrivateKey = wx.getStorageSync('encryptedPrivateKeyEncryptedn');  //调取私钥
+    const iv = wx.getStorageSync('encryptedPrivateKeyIv');   //调取iv
+    const passWord = wx.getStorageSync('passWord');
+
+    const privateKey = this.decryptPrivateKey(encryptPrivateKey,iv,passWord);
+    const wallet = new ethers.Wallet(privateKey);
+
+    this.setData({              //上号更新私钥和完整钱包
+      privateKey:privateKey,
+      wallet:wallet,
+    })   
   },
 
   /**
@@ -47,22 +100,42 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    
+    this.checkConnectionStatusInterval = setInterval(() => {
+      const currentApp = getApp();
+      console.log('正在计时')
+      if (this.data.ifCounldConnect !== currentApp.ifCounldConnect) {
+        this.automaticLink();
+        clearInterval(this.checkConnectionStatusInterval);
+      }
+    }, 500);
   },
 
+  //自动连接最后一次使用的设备（如果在范围内）
+  automaticLink:function(){
+    const lastlyConnectBLE = wx.getStorageSync('lastlyConnectBLE');
+    const lastlyConnectBLEID = wx.getStorageSync('lastlyConnectBLEID');
+    if(lastlyConnectBLE){
+        this.DoforDevice(lastlyConnectBLE,lastlyConnectBLEID)
+        this.setData({
+          showingModal:false
+        })
+    }
+  },
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide() {
-  
+    
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload() {
-
+    
   },
+
+  
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
@@ -89,14 +162,9 @@ Page({
 aroundDeviceBluetoothConnect:function(event){
     const device = event.currentTarget.dataset.device;
     const deviceID = device.deviceID;
-    const { name , signalStrength} = device;
- 
-    this.DoforDevice(deviceID, name, signalStrength);
+    const { name } = device;
+    this.DoforDevice(deviceID,name);
     this.hideModal();
-
-    wx.setNavigationBarTitle({
-      title: name,
-    })
 },
 
 changeDevice:function(){
@@ -104,7 +172,7 @@ changeDevice:function(){
 },
 
 //------------------用于连接与获取必须的信息-------------------------
-DoforDevice:function(deviceID){
+DoforDevice:function(deviceID,name){
   //1.连接蓝牙
   wx.createBLEConnection({
     deviceId: deviceID,
@@ -117,6 +185,14 @@ DoforDevice:function(deviceID){
     },
     success:()=>{
       this.getServices(deviceID);           //2.获取服务
+      this.setData({
+        lastlyConnectBLE:deviceID,
+        lastlyConnectBLEID:name
+      })
+      console.log(this.data.lastlyConnectBLE)
+      wx.setNavigationBarTitle({
+        title: name,
+      })
     },
   })
 },
@@ -132,7 +208,6 @@ getServices:function(deviceID){
     },
   })
 },
-
 
 getCharacteristics: function(deviceId, serviceId){
   wx.getBLEDeviceCharacteristics({
@@ -163,8 +238,11 @@ updateDeviceInformation: function(deviceId, serviceId, characteristicIds) {
   }, () =>{
     this.listentoBlue();
     this.startSignalStrengthUpdate();
+    wx.setStorageSync('lastlyConnectBLE', this.data.lastlyConnectBLE);
+    wx.setStorageSync('lastlyConnectBLEID', this.data.lastlyConnectBLEID);
   });
 },
+
 //------------------用于蓝牙设备功能的启用------------------
 //收取信息
 listentoBlue:function(){
@@ -243,6 +321,18 @@ listentoBlue:function(){
 sendCommand: function(event) {  
   const command = event.currentTarget.dataset.command; 
   this.sendData(command);
+},
+
+sendsecretCommand:function(event){
+  const command = event.currentTarget.dataset.command;
+  const cmd={
+    TimeStamp:Math.floor(Date.now() / 1000),
+    command,command
+  }
+  var cmdstr=JSON.stringify(cmd)
+  const signature =  this.data.wallet.signMessageSync(cmdstr);
+  this.sendData(signature)
+  console.log(signature);
 },
 
 sendData: function(command) {
@@ -427,6 +517,49 @@ getDeviceRSSI: function() {
       showingModal:false
     })
   },
+
+  showUserModal:function(){
+    this.setData({
+      showingUserModal:true
+    })
+  },
+
+  hideUserModal:function(){
+    this.setData({
+      showingUserModal:false
+    })
+  },
+
+  showRegisterModal:function(){
+    this.setData({
+      ifRegisterAction:true
+    })
+  },
+
+  hideRegisterModal:function(){
+    this.setData({
+      ifRegisterAction:false
+    })
+  },
+
+  showLoadrModal:function(){
+    this.setData({
+      ifLoadAction:true
+    })
+  },
+
+  hideLoadrModal:function(){
+    this.setData({
+      ifLoadAction:false
+    })
+  },
+
+  exitRegisterOrLoad:function(){
+    this.setData({
+      ifLoadAction:false,
+      ifRegisterAction:false
+    })
+  },
   //---------------更新设备列表----------------
   loadDevices: function() {
     const app = getApp();
@@ -434,7 +567,139 @@ getDeviceRSSI: function() {
       devices: app.devices // 从全局获取设备列表
     });
   },
+  //---------------用户登录-------------------
+  userLoad:function(){
 
+  },
+
+  //---------------创建账号--------------------
+
+  userRegister:function(){
+    this.showRegisterModal()
+  },
+
+  onInputRegister:function(event){
+    const helpDO = event.detail.value;
+
+    this.setData({
+      mnemonic:helpDO
+    })
+
+    if (helpDO.length >= 10){
+      this.setData({
+        iconSrc1:'/image/right.png',
+        mnemonicOK:true
+      })
+    }else if(helpDO.length === 0){
+      this.setData({
+        iconSrc1:'',
+        mnemonicOK:false
+      })
+    }else{
+      this.setData({
+        iconSrc1:'/image/error.png',
+        mnemonicOK:false
+      })
+    }
+  },
+
+  onInputPassword:function(event){
+    const helpDo = event.detail.value;
+
+    this.setData({
+      password:helpDo
+    })
+
+    if (helpDo.length === 6 && /^\d{6}$/.test(helpDo)){
+      this.setData({
+        iconSrc2:'/image/right.png',
+        passwordOK:true
+      })
+    }else if(helpDo.length === 0){
+      this.setData({
+        iconSrc2:'',
+        passwordOK:false
+      })
+    }else{
+      this.setData({
+        iconSrc2:'/image/error.png',
+        passwordOK:false
+      })
+    }
+  },
+
+  walletShow:function(){
+    wx.showModal({
+      title: '钱包地址',
+      content: `${this.data.wallet.address}`,
+  });
+  },
+  //------------web部分-----------------
+  onRegister:function(){//用户点击注册
+    const privateKey = ethers.sha256(ethers.toUtf8Bytes(this.data.mnemonic));
+    const wallet = new ethers.Wallet(privateKey);
+
+    this.setData({                             //此时有数据，相当于已经登录
+      privateKey:privateKey,
+      wallet:wallet,
+      ifUserLoad:true,                        //注册完后更新登录状态，
+    })
+    console.log('私钥：',this.data.privateKey);
+    console.log('钱包：',this.data.wallet);
+
+    const encryptedPrivateKey = this.encryptPrivateKey(privateKey,this.data.password);
+    console.log(encryptedPrivateKey);
+    const jiemi = this.decryptPrivateKey(encryptedPrivateKey.encrypted,encryptedPrivateKey.iv,this.data.password);
+    console.log('jiemi:',jiemi);
+
+    wx.setStorageSync('encryptedPrivateKeyIv', encryptedPrivateKey.iv);     //存储iv
+    console.log('存储的加密私钥:', encryptedPrivateKey.iv);
+    wx.setStorageSync('encryptedPrivateKeyEncryptedn', encryptedPrivateKey.encrypted);//储存私钥
+    console.log('存储的IV:', encryptedPrivateKey.encrypted);
+    wx.setStorageSync('walletAddress', wallet.address);      //存储钱包地址
+    wx.setStorageSync('passWord',this.data.password);     //存储密码
+    this.hideRegisterModal();
+    
+  },
+//用于生成随机数的方法
+  generateRandomNumber:function() {        
+    let iv = '';
+    for (let i = 0; i < 16; i++) {
+        const byte = Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+        iv += byte;
+    }
+    return CryptoJS.enc.Hex.parse(iv);
+},
+//加密函数
+  encryptPrivateKey: function(privateKey, passWord) {
+    const hash = ethers.sha256(ethers.toUtf8Bytes(passWord));
+    const key16 = CryptoJS.enc.Hex.parse(hash.slice(2, 34)); // 将前32个字符（16字节）转换为WordArray
+    const iv = this.generateRandomNumber();
+    console.log('iv:',iv.toString(CryptoJS.enc.Base64));
+    const encrypted = CryptoJS.AES.encrypt(privateKey, key16, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+    return {
+      iv: iv.toString(CryptoJS.enc.Base64),
+      encrypted: encrypted.toString(), // 返回加密后的密钥
+    };
+},
+//解密函数
+  decryptPrivateKey:function(encryptedPrivateKey, iv, password) {
+    const hash = ethers.sha256(ethers.toUtf8Bytes(password));
+    const key16 = CryptoJS.enc.Hex.parse(hash.slice(2, 34));
+    const ivword = CryptoJS.enc.Base64.parse(iv);
+
+    const decrypted = CryptoJS.AES.decrypt(encryptedPrivateKey, key16, {
+        iv: ivword,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return decrypted.toString(CryptoJS.enc.Utf8);            //返回解密后的私钥
+},
 
 
 })

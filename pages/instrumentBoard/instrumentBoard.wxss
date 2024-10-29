@@ -24,8 +24,8 @@
 .connect-buttonchoose{
   margin-top: 10rpx;
   margin-right: 100rpx;
-  height: 60rpx;
-  width: 110rpx;
+  height: 75%;
+  width: 18%;
   background-color: #00BBFF;
   opacity: 0.8;
   display: flex;
@@ -648,13 +648,262 @@
   margin-left: 20rpx;
 }
 
-.username{
+.username1{
   margin-left: 10rpx;
 }
 
 .usertitle{
-  font-size: 32rpx;
+  font-size: 33rpx;
   font-weight: bold;
+}
+
+.userBox{
+  display: flex;
+  flex-direction: row;
+  z-index: 100;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.leftBox{
+  background-color: #AAAAAA;
+  opacity: 0.6;
+  width: 30%;
+}
+
+.rightBox{
+  background-color: white;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.userBackGroud{
+  background-color: black;
+  width: 100%;
+  height: 320rpx;
+}
+
+.UserInformationBox{
+  background-color: #F8F8F8;
+  width: 100%;
+  height: 1000rpx;
+}
+
+.userTrueBox{
+  display: flex;
+  flex-direction: column;
+}
+
+.userNameAndPhoto{
+  display: flex;
+  flex-direction: row;
+}
+
+.userPhoto{
+  width: 200rpx;
+  height: 200rpx;
+  margin-top: -15%;
+  margin-left: 20rpx;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headPhoto{
+  height: 190rpx;
+  width: 190rpx;
+}
+
+.username{
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 30rpx;
+  margin-top: 4%;
+  margin-right: 20%;
+}
+
+.usernametitle{
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.usernametitle1{
+  font-size: 40rpx;
+  font-weight: bold;
+  
+}
+
+.changeHeadBox{
+  width: 100%;
+}
+
+.headChange{
+  font-size: 37rpx;
+}
+
+.nameAndInformationLine{
+  background-color: #DDDDDD;
+  height: 2rpx;
+  margin:7rpx
+}
+
+.changename{
+  margin-top: 4%;
+  margin-left: -15%;
+  width: 15%;
+  height: 80rpx;
+}
+
+.changenameimage{
+  height: 40rpx;
+  width: 40rpx;
+}
+
+.aboutUserWithNoLoad{
+  margin-top: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.userLoad{
+  width: 60%;
+  border-radius:40rpx ;
+  background-color: #00BBFF;
+  margin-top: 30rpx;
+}
+
+.registerAndLoadBox{
+  z-index: 250;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.upBox{
+  width: 100%;
+  height: 25%;
+  background-color: 	#888888;
+  opacity: 0.6;
+}
+
+.downBox{
+  height: 75%;
+  width: 100%;
+  background-color: white;
+  justify-content: center;
+}
+
+.registerActon{
+  height: 40%;
+  width: 90%;
+  margin-left:5% ;
+  margin-top: 20%;
+  border: 2px solid #888888;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.rememberBox{
+  height: 45%;
+  width: 90%;
+  margin-top: 5%;
+  margin-left: 5%;
+}
+
+.secretBox{
+  height: 45%;
+  width: 90%;
+  margin-bottom: 5%;
+  margin-left: 5%;
+}
+
+.RegisterText{
+  font-size: 40rpx;
+  font-weight: 520;
+  margin-left: 5%;
+}
+
+.RegisterInput{
+  margin-top: 10rpx;
+  border: 2px solid #AAAAAA;
+  border-radius: 18rpx;
+  height: 80%;
+}
+
+.inputAndJudge{
+  height: 60%;
+}
+
+.ifrightimage{
+  height: 70rpx;
+  width: 70rpx;
+  position: relative;
+  bottom: 70%;
+  left: 87%;
+}
+
+.registerButton{
+  background-color: #00BBFF;
+  width: 40%;
+  margin-left: 30%;
+  height: 100rpx;
+  margin-top: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx;
+}
+
+.registerButton1{
+  background-color: #AAAAAA;
+  width: 40%;
+  margin-left: 30%;
+  height: 100rpx;
+  margin-top: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx;
+}
+
+.aboutUserInformationBox{
+  width: 100%;
+  height: 500rpx;
+  background-color: #888888;
+  margin-top: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.aBox{
+  width: 96%;
+  height: 16%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 2%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.walletimage{
+  height: 50rpx;
+  width: 50rpx;
 }
 
 
