@@ -1,915 +1,645 @@
+
 .pages{
-  background: linear-gradient(to bottom, #99BBFF, white);
-  padding-top: 4rpx;
-  height: 1000rpx
+  background-color: #e4f0ed;
+  padding: 0 0 0 0; 
+  height: 100vh;
 }
-
-.prompt{
-  position: absolute ;
-  width: 100%;
-  height: 80rpx;
-  opacity: 0.5;
-  background-color: white;
-  display: flex;
-  flex-direction:row;
-}
-
-.connect-prompt{
-  font-size: 36rpx;
-  font-weight:lighter;
-  margin-top:16rpx;
-  margin-left: 80rpx;
-}
-
-.connect-buttonchoose{
-  margin-top: 10rpx;
-  margin-right: 100rpx;
-  height: 75%;
-  width: 18%;
-  background-color: #00BBFF;
-  opacity: 0.8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius:20rpx ;
-}
-
-.connect-button-script{
-  color: white;
-  font-size: 28rpx;
-  font-weight:bolder;
-  margin-bottom: 0rpx;
-}
-
-.devicechoosePage{
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-}
-
-.blackBlock{
-  height: 500rpx;
-  background-color: #000000;
-  opacity: 0.25;
-}
-
-.devicechooseBlock{
-  background: linear-gradient(to bottom, #CCEEFF, white);
-  height: 970rpx;
-}
-
-.devicechooseBlockTitle{
-  display: flex;
-  flex-direction: row;
-}
-
-.backbutton{
-  background-color: #00BBFF;
-  margin-left: 0;
-  height: 80rpx;
-  width: 120rpx;
-  margin-top: 10rpx;
-  margin-left: 10rpx;
-}
-
-.backimage{
-  height: 80rpx;
-  width: 100rpx;
-  position: relative;
-  right: 14rpx;
-}
-
-.backtitleBox{
-  width: 400rpx;
-  margin-right: 130rpx;
-  display: flex;
-  align-items: center;
-}
-
-.backTitle{
-  font-size: 44rpx;
-  font-weight: bold;
-  margin-left: 75rpx;
-}
-
-.deviceChooseLine{
-  height: 2rpx;
-  background-color: black;
-  margin:10rpx 0rpx 10rpx 0rpx;
-}
-
-.devicechooseList{
-  margin: 0 auto;
-  width: 100%; /* 设置宽度为 100% */
-  max-width: 1100rpx;
-  max-height: 800rpx;
-  width: calc(100% - 40rpx);
-  overflow-y: auto;
-}
-
-.device-item{
-  width: 100%;
-  height: 140rpx;
-  margin-top: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.itemStyle{
-  display:flex ;
-  flex-direction: row;
-  background-image: linear-gradient(to right, #CCDDFF, #DDDDDD);
-  border-radius: 50rpx;
-}
-
-.device{
-  display: flex;
-  flex-direction: row;
-}
-
-.device{
-  height: 140rpx;
-}
-
-.devicename{
-  margin-left: 0rpx;
-  margin-top: 40rpx;
-  height: 60rpx;
-  width: 300rpx;
-  display: flex;
-  align-items: center;
-}
-
-.itemchar{
-  display: inline-block;
-  width: 7em;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  font-size: 60rpx;
-  font-weight: bold;
-  color: white;
-  margin-left: 20rpx;
-}
-
-.devicePrice{
-  display:flex;
-  align-items: center;
-  margin-top: 10rpx;
-  margin-left: 20rpx;
-
-}
-
-.price{
-  font-size: 38rpx;
-  font-style: italic;
-  font-weight: bold;
-  margin-left: 36rpx;
-}
-
-
 .fristBox{
-  width: 100%;
-  height: 530rpx;
+  width: 90%;
+  height: 10%;
+  margin-left: 5%;
   display: flex;
   flex-direction: row;
-  margin-top: 20rpx;
+
 }
-
-.batteryBlock{
-  width: 180rpx;
-  height: 500rpx;
-  margin-top: 30rpx;
-  margin-left: 30rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.batteryBlockList{
-  background-color: #CCEEFF;
-  height: 120rpx;
-  display: flex;
-  flex-direction: row;
-  border-radius: 20rpx 60rpx 60rpx 20rpx;  
-}
-
-.batterypowershow{
-  margin-top: 26rpx;
-  height: 60rpx;
-  width: 60rpx;
-}
-
-.powershow{
-  display: flex;
-  flex-direction: column;
-  margin-top: 23rpx;
-}
-
-.powertittle{
-  font-size: 26rpx;
-  font-weight: bold;
-  margin-left: 12rpx;
-  margin-top: 5rpx;
-}
-
-.signalList{
-  background-color: #CCEEFF;
-  height: 120rpx;
-  margin-top: 7rpx;
-  width: 180rpx;
-  border-radius: 20rpx 60rpx 60rpx 20rpx; 
-  display: flex;
-  flex-direction: row;
-}
-
-.prepositonScript{
-  height: 120rpx;
-  width: 60rpx;
-  border-radius: 20rpx;
-  background-color: #9F88FF ;
-}
-
-.signaltittle{
-  writing-mode: vertical-rl;
-  text-align: center;
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-top: 25rpx;
-  margin-left: 9rpx;
-}
-
-.signalima{
-  height:90rpx;
-  width: 110rpx;
-  margin-top: 10rpx;
-}
-
-.timeList{
-  background-color: #CCEEFF;
-  height: 120rpx;
-  margin-top: 7rpx;
-  width: 180rpx;
-  border-radius: 20rpx 60rpx 60rpx 20rpx; 
-  display: flex;
-  flex-direction: row;
-}
-
-.time1{
-  font-size: 38rpx;
-  font-weight: bold;
-  margin-left: 16rpx;
-  margin-top: 16rpx;
-}
-
-.time2{
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-top: -10rpx;
-  margin-left: 3rpx;
-}
-
-.timeAndDistance{
-  display: flex;
-  flex-direction: column;
-  margin-left: 15rpx;
-}
-
-.distanceList{
-  background-color: #CCEEFF;
-  height: 120rpx;
-  margin-top: 7rpx;
-  width: 180rpx;
-  border-radius: 20rpx 60rpx 60rpx 20rpx;  
-  display: flex;
-  flex-direction: row;
-}
-
-.distance1{
-  font-size: 38rpx;
-  font-weight: bold;
-  margin-left: 16rpx;
-  margin-top: 16rpx;
-}
-
-.distance2{
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-top: -10rpx;
-  margin-left: 7rpx;
-}
-
-.speedBlock{
-  background-color: #99FFFF;
-  width: 500rpx;
-  height: 500rpx;
-  border-radius: 0 250rpx 250rpx 0;
-  margin-top: 30rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.speedBox{
-  height: 360rpx;
-  width: 500rpx;
-  display: flex;
-  flex-direction: row;
-}
-
-.speedbigBox{
-  height: 360rpx;
-  width: 360rpx;
-  margin-top: 20rpx;
-}
-
-.speedbig{
-  font-size: 290rpx;
-  position: relative;
-  top: 30rpx;
-  left: 10rpx;
-}
-
-.speedsmallBox{
-  margin-top:280rpx ;
-  height: 80rpx;
-  width: 360rpx;
-}
-
-.speedsmall{
-  font-size: 44rpx;
-  font-style: italic;
-  font-weight: bold;
-  color: white;
-}
-
-.journeyBox{
-  height: 140rpx;
-  width: 500rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.longtittle{
-  margin-top: 15rpx;
-  margin-left: 20rpx;
-  font-size: 36rpx;
-  font-weight: bold;
-}
-
-.long{
-  font-size: 45rpx;
-  font-weight: bold;
-  margin-left: 140rpx;
-}
-
-.secondBox{
-  width: 100%;
-  height: 500rpx;
-  margin-top: 50rpx;
-  display: flex;
-  flex-direction: row;
-}
-
-.batteyList{
+.leftBoxofFrist{
   height: 100%;
-  width: 230rpx;
-  background-image: linear-gradient(to right, #FFFFFF, #CCBBFF );
-  border-radius: 0 60rpx 60rpx 0;
-}
-
-.batteryState{
-  margin-top: 40rpx;
-  opacity: 0.7;
-}
-
-.batterystatetitle{
-  margin-left: 8rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.batterySeize{
-  width: 100%;
-  height: 150rpx;
-  display: flex;
-  flex-direction: row;
-}
-
-.stateshow{
-  background-color: #FFFFFF;
-  height: 130rpx;
-  width: 130rpx;
-  margin-top: 15rpx;
-  margin-left: 15rpx;
-  border-radius: 40rpx 0 0 40rpx;
-}
-
-.statemind{
-  background-color: #B088FF;
-  height: 130rpx;
-  width: 45rpx;
-  margin-top: 15rpx;
-  border-radius: 0 20rpx 20rpx 0;
-}
-
-.batterystateimage{
-  width: 100rpx;
-  height: 100rpx;
-  margin-top: 20rpx;
-  margin-left: 20rpx;
-}
-
-.batterystatemid{
-  font-size: 32rpx;
-  writing-mode: vertical-rl;
-  font-weight: bold;
-  margin-top: 16rpx;
-}
-
-.noLink{
-  font-size: 32rpx;
-  writing-mode: vertical-rl;
-  font-weight: bold;
-  margin-top: 16rpx;
-}
-
-.dotobattery{
-  margin-top: 40rpx;
-  opacity: 0.7;
-}
-
-.whatcando{
-  margin-left: 8rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.batterystatemid1{
-  font-size: 32rpx;
-  writing-mode: vertical-rl;
-  font-weight: bold;
-  margin-top: 16rpx;
-  margin-right: 0rpx;
-}
-
-.buttonseize{
-  width: 100%;
-  height: 150rpx;
-  display: flex;
-  flex-direction: row;
-}
-
-.batterycommandleft{
-  background-color: #00BBFF;
-  height: 130rpx;
-  width: 130rpx;
-  margin-top: 15rpx;
-  margin-left: 15rpx;
-  border-radius: 40rpx 0 0 40rpx;
-}
-
-.batterycommandleft1{
-  background-color: #DDDDDD;
-  height: 130rpx;
-  width: 130rpx;
-  margin-top: 15rpx;
-  margin-left: 15rpx;
-  border-radius: 40rpx 0 0 40rpx;
-}
-
-.titleBox{
-  background-color: #B088FF;
-  height: 130rpx;
-  width: 45rpx;
-  margin-top: 15rpx;
-  position: relative;
-  left: -19rpx;
-  border-radius: 0 20rpx 20rpx 0;
-}
-
-.titleBoxcannobind{
-  background-color: #B088FF;
-  height: 130rpx;
-  width: 45rpx;
-  margin-top: 15rpx;
-  position: relative;
-  left: -15rpx;
-  border-radius: 0 20rpx 20rpx 0;
-}
-
-.batterycommandtitle{
-  font-size: 29rpx;
-  writing-mode: vertical-rl;
-  font-weight: bold;
-  margin-top: 10rpx;
-  margin-left: 5rpx;
-}
-
-.openlockimage{
-  width: 90rpx;
-  height: 90rpx;
-  margin-top: 20rpx;
-}
-
-.bikelockList{
-  height: 100%;
-  width:  390rpx;
-  display: flex;
-  flex-direction:column ;
-}
-
-.b1{
-  width: 100%;
-  height: 60%;
-}
-
-.changebutton{
-  height: 150rpx;
-  width: 150rpx;
-  border-radius: 50%;
-  background-color: #00BBFF;
-  display: flex;
-  align-items: center;
-  margin-top: 50rpx;
-}
-
-.changeimage{
-  height: 100rpx;
-  width: 100rpx;
-}
-
-.changeScript{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20rpx;
-}
-
-.changetitle{
-  font-size: 36rpx;
-  font-weight: bold;
-}
-
-.b2{
-  height: 40%;
-}
-
-.buttonBox{
-  width: 100%;
-  height: 300rpx;
-  margin-top: 120rpx;
-}
-
-.lockbutton1{
-  height: 210rpx;
-  width: 210rpx;
-  border-radius: 50%;
-  background-color: 	#AAAAAA;
-}
-
-.lockbutton2{
-  height: 210rpx;
-  width: 210rpx;
-  border-radius: 50%;
-  background-color: 	#CCFF99;
-}
-
-.lockbutton3{
-  height: 210rpx;
-  width: 210rpx;
-  border-radius: 50%;
-  background-color: 	#FF0000 ;
-}
-
-.closeimage{
-  width: 140rpx;
-  height: 140rpx;
-  margin-top: 40rpx;
-}
-
-.startimage{
-  width: 140rpx;
-  height: 140rpx;
-  margin-top: 40rpx;
-}
-
-.lockremind1{
-  margin-left: 45rpx;
-  position: relative;
-  top:25rpx;
-}
-
-.lockremindtitle1{
-  font-weight: bold;
-  font-size: 33rpx;
-}
-
-.lockremindtitle2{
-  font-weight: bold;
-  font-size: 33rpx;
-  margin-left: 138rpx;
-}
-
-.lockremindtitle3{
-  font-weight: bold;
-  font-size: 33rpx;
-  margin-left: 100rpx;
-}
-
-.userList{
-  height: 40%;
-  width: 230rpx;
-  margin-top: 150rpx;
-}
-
-.userTap{
-  height: 100%;
-  width: calc(100% - 40rpx);
-  margin-left: 40rpx;
-  background-color: #263c44;
-  border-radius: 50rpx 0 0 50rpx;
-}
-
-.user{
-  height: 100%;
-  background-color: #00BBFF;
-  border-radius: 50rpx 0 0 50rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.userpage{
-
-  width: 90rpx;
-  height: 90rpx;
-  margin-top: 40rpx;
-  margin-left: 20rpx;
-}
-
-.username1{
-  margin-left: 10rpx;
-}
-
-.usertitle{
-  font-size: 33rpx;
-  font-weight: bold;
-}
-
-.userBox{
-  display: flex;
-  flex-direction: row;
-  z-index: 100;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.leftBox{
-  background-color: #AAAAAA;
-  opacity: 0.6;
-  width: 30%;
-}
-
-.rightBox{
-  background-color: white;
   width: 70%;
   display: flex;
   flex-direction: column;
 }
-
-.userBackGroud{
-  background-color: black;
-  width: 100%;
-  height: 320rpx;
+.connect-prompt{
+  font-size: 40rpx;
+  font-weight: 200;
+  margin-left: 18%;
+  font-weight: 500;
+  font-style: italic;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
-
-.UserInformationBox{
-  background-color: #F8F8F8;
-  width: 100%;
-  height: 1000rpx;
-}
-
-.userTrueBox{
+.connect-buttonchoose{
+  width: 70%;
+  height: 50%;
+  border-radius: 50rpx;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1%;
+  background-color: yellowgreen;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-
-.userNameAndPhoto{
+.connect-buttonchoose1{
+  width: 70%;
+  height: 50%;
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1%;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.connect-button-script1{
+  color: yellowgreen;
+  font-size: 35rpx;
+  font-weight: 600;
+}
+.connect-button-script{
+  color: white;
+  font-size: 35rpx;
+  font-weight: 600;
+}
+.helloUser{
+  font-size: 45rpx;
+  font-weight: 600;
+}
+.helloDevice{
+  margin-top: 2%;
+  margin-left: 10%;
+}
+.helloDevice1{
+  font-weight:lighter;
+  font-size: 36rpx;
+}
+.helloDevice2{
+  font-weight: 600;
+  color: white;
+  font-size: 48rpx;
+  width: 55%;
+  overflow: hidden;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.rightBoxofFrist{
+  width: 30%;
+}
+.user{
+  width: 85%;
+  height: 100%;
+  margin-left: 15%;
+  background-color: yellowgreen;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.userpage{
+  height: 110rpx;
+  width: 110rpx;
+}
+.secondBox{
+  width: 90%;
+  height: 65%;
+  margin-right: 5%;
+  margin-left: 5%;
+  margin-top: 10%;
   display: flex;
   flex-direction: row;
 }
-
-.userPhoto{
-  width: 200rpx;
+.leftSecondBox{
+  width: 47.5%;
+}
+/*速度组件s*/
+.speedBox{
+  background-color: white;
+  height: 40%;
+  border-radius: 60rpx;
+  margin-top: 5%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+.speedTitle{
+  color: yellowgreen;
+  font-size: 38rpx;
+  font-weight: 600;
+  margin-left: 15%;
+  position: relative;
+  top: 5%;
+}
+.speedbig{
+  color: yellowgreen;
+  font-size: 180rpx;
+  font-weight: 600;
+  margin-left: 15%;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.speedsmall{
+  color: yellowgreen;
+  font-size: 38rpx;
+  font-weight: 600;
+  margin-left: 35%;
+}
+/*速度组件e*/
+/*启动组件s*/
+.startBox{
+  height: 28.5%;
+  width: 100%;
+  margin-top: 5%;
+  position: relative;
+  transition: transform 0.6s; /* 动画过渡 */
+  transform-style: preserve-3d; /* 保持3D效果 */
+}
+.noLinkStartBox{
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.startimage{
   height: 200rpx;
-  margin-top: -15%;
-  margin-left: 20rpx;
-  border-radius: 50%;
+  width: 200rpx;
+  margin-right: 10%;
+}
+.stopimage{
+  height: 200rpx;
+  width: 200rpx;
+}
+.LinkStartBoxWithNo{
+  background-color: yellowgreen;
+  width: 100%;
+  height: 100%;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+.noLinkStartBoxWithYes{
+  background-color: yellowgreen;
+  width: 100%;
+  height: 100%;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+/*启动组件e*/
+.rightSecondBox{
+  width: 47.5%;
+  height: 100%;
+  margin-left: 5%;
+  display: flex;
+  flex-direction: column;
+}
+/*电量组件s*/
+.batteryBlock{
+  background-color: white;
+  height: 35%;
+  border-radius: 60rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.batteryimage{
+  height:100rpx ;
+  width: 100rpx;
+  margin-left:35%;
+  margin-top: 28%;
+}
+.batterytitlebox{
+  display: flex;
+  flex-direction: row;
+}
+.battryNum{
+  font-size: 37rpx;
+  font-weight: 600;
+  margin-left: 20%;
+  color: yellowgreen;
+}
+.batteryPercentage{
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-top: 2%;
+  margin-left: 20%;
+  color: yellowgreen;
+}
+.canvasBox{
+  position: relative;
+  z-index: -1;
+}
+/*电量组件e*/
+/*设备弹窗s*/
+.connectWindow {
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 确保弹窗在上方 */
+}
+.connectPage {
+  width: 80%; /* 可以根据需要调整宽度 */
+  height: 60%; /* 固定高度 */
+  background-color: white; /* 背景颜色 */
+  border-radius: 60px; /* 圆角 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); /* 阴影效果 */
+  display: flex; /* 使用 flexbox 布局 */
+  flex-direction: column; /* 垂直布局 */
+  align-items: center; /* 居中对齐 */
+
+}
+.connectWindowTitle{
+  margin-top: 3%;
+  margin-bottom: 1%;
+  font-weight: 600;
+  font-size: 43rpx;
+  color: yellowgreen;
+}
+.deviceChooseLine{
+  background-color: yellowgreen;
+  width: 95%;
+  height: 4rpx;
+  margin: 5rpx 0;
+}
+.deviceLists{
+  width: 100%;
+  height: 85%;
+  overflow-y: auto; 
+}
+.itemStyle{
+  width: 96%;
+  height: 17%;
+  background-color: yellowgreen;
+  border-radius: 40rpx;
+  margin-top: 2%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.itemchar{
+  width: 40%;
+  font-size: 50rpx;
+  font-weight: 600;
+  color: white;
+  overflow: hidden; /* 隐藏超出部分 */
+  white-space: nowrap; /* 不换行 */
+  text-overflow: ellipsis; /* 显示省略号 */
+}
+.price{
+  width: 50%;
+  font-size: 36rpx;
+  font-weight:lighter ;
+  color: white;
+}
+.connectWindowButton{
+  width: 25%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  background-color: yellowgreen;
+  border-radius: 20rpx;
+}
+/*设备弹窗e*/
+/*信号板块s*/
+.signalBlock{
+  width: 100%;
+  height: 15%;
+  background-color: white;
+  margin-top: 5%;
+  border-radius: 60rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.noSiganal{
+  font-size: 37rpx;
+  color: yellowgreen;
+}
+.signalima{
+  height: 100rpx;
+  width: 120rpx;
+}
+/*信号板块e*/
+/*时间板块s*/
+.timeBlock{
+  width: 100%;
+  height: 15%;
+  background-color: white;
+  margin-top: 5%;
+  border-radius: 60rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.time1{
+  font-size: 42rpx;
+  font-weight: 600;
+  color: yellowgreen;
+}
+/*时间板块e*/
+/*电池锁板块s*/
+.batteryLockBlock{
+  height: 40%;
+  width: 100%;
+  margin-top: 5%;
+  background-color: white;
+  border-radius: 60rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lockStateTitle{
+  margin-top: 8%;
+  margin-right: 20%;
+  font-size: 38rpx;
+  font-weight: 600;
+  color: yellowgreen;
+}
+.lockStateShow{
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 70%;
+  height: 25%;
+  margin-top: 10%;
+  border-radius: 40rpx;
   background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-.headPhoto{
-  height: 190rpx;
-  width: 190rpx;
+.StateScript1{
+  color: yellowgreen;
+  font-size: 100rpx;
+  position: relative;
+  bottom: 30%;
 }
-
-.username{
-  height: 80rpx;
+.StateScript{
+  font-size: 33rpx;
+  font-weight: 400;
+  color: yellowgreen;
+}
+.couldnotOpenLockButton{
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 70%;
+  height: 25%;
+  margin-top: 10%;
+  border-radius: 40rpx;
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 30rpx;
-  margin-top: 4%;
-  margin-right: 20%;
 }
-
-.usernametitle{
+.couldnotScript{
   font-size: 40rpx;
-  font-weight: bold;
+  font-weight: 600;
+  color: yellowgreen;
 }
-
-.usernametitle1{
+.couldOpenLockButton{
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 70%;
+  height: 25%;
+  margin-top: 10%;
+  border-radius: 40rpx;
+  background-color: yellowgreen;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.couldnotScript1{
   font-size: 40rpx;
-  font-weight: bold;
-  
+  font-weight: 600;
+  color: white;
 }
-
-.changeHeadBox{
+/*电池锁板块e*/
+/*切换设备板块s*/
+.changeDeviceBox{
+  background-color: white;
   width: 100%;
+  height: 15%;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
-
-.headChange{
-  font-size: 37rpx;
+.changeDeviceBox1{
+  background-color: yellowgreen;
+  width: 100%;
+  height: 15%;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
-
-.nameAndInformationLine{
-  background-color: #DDDDDD;
-  height: 2rpx;
-  margin:7rpx
+.changeimage{
+  height: 100rpx;
+  width: 100rpx;
 }
-
-.changename{
-  margin-top: 4%;
-  margin-left: -15%;
+/*切换设备板块e*/
+/*主页板块s*/
+.userPage{
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  z-index: 1000; /* 确保弹窗在上方 */
+}
+.besideLeftPage{
+  width: 80%;
+  height: 60%;
+  margin-right: 0;
+  background-color: white;
+  border-radius: 0 0rpx 60rpx 60rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.userHead{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 2%;
+  height: 16%;
+}
+.headPhotoBox{
+  background-color: yellowgreen;
+  margin-left: 3%;
+  height: 100%;
+  width: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.headPhoto{
+  height: 120rpx;
+  width: 120rpx;
+}
+.userName{
+  font-size: 43rpx;
+  margin-left: 10%;
+  font-weight: 550;
+  color: yellowgreen;
+}
+.headLine{
+  width: 100%;
+  margin: 3% 0;
+  height: 4rpx;
+  background-color: yellowgreen;
+}
+.changeName{
+  margin-right: 3%;
   width: 15%;
-  height: 80rpx;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: yellowgreen;
 }
-
-.changenameimage{
+.changeNameImage{
   height: 40rpx;
   width: 40rpx;
 }
-
-.aboutUserWithNoLoad{
-  margin-top: 200rpx;
+.userInformationBox{
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
-}
-
-.userLoad{
-  width: 60%;
-  border-radius:40rpx ;
-  background-color: #00BBFF;
-  margin-top: 30rpx;
-}
-
-.registerAndLoadBox{
-  z-index: 250;
-  position: fixed;
   width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
+  height: 65%;
 }
-
-.upBox{
-  width: 100%;
-  height: 25%;
-  background-color: 	#888888;
-  opacity: 0.6;
-}
-
-.downBox{
-  height: 75%;
-  width: 100%;
-  background-color: white;
-  justify-content: center;
-}
-
-.registerActon{
-  height: 40%;
+.wallet{
+  margin-top: 2%;
   width: 90%;
-  margin-left:5% ;
-  margin-top: 20%;
-  border: 2px solid #888888;
-  border-radius: 20rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.rememberBox{
-  height: 45%;
-  width: 90%;
-  margin-top: 5%;
-  margin-left: 5%;
-}
-
-.secretBox{
-  height: 45%;
-  width: 90%;
-  margin-bottom: 5%;
-  margin-left: 5%;
-}
-
-.RegisterText{
-  font-size: 40rpx;
-  font-weight: 520;
-  margin-left: 5%;
-}
-
-.RegisterInput{
-  margin-top: 10rpx;
-  border: 2px solid #AAAAAA;
-  border-radius: 18rpx;
-  height: 80%;
-}
-
-.inputAndJudge{
-  height: 60%;
-}
-
-.ifrightimage{
-  height: 70rpx;
-  width: 70rpx;
-  position: relative;
-  bottom: 70%;
-  left: 87%;
-}
-
-.registerButton{
-  background-color: #00BBFF;
-  width: 40%;
-  margin-left: 30%;
-  height: 100rpx;
-  margin-top: 10%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20rpx;
-}
-
-.registerButton1{
-  background-color: #AAAAAA;
-  width: 40%;
-  margin-left: 30%;
-  height: 100rpx;
-  margin-top: 10%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20rpx;
-}
-
-.aboutUserInformationBox{
-  width: 100%;
-  height: 500rpx;
-  background-color: #888888;
-  margin-top: 30rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.aBox{
-  width: 96%;
-  height: 16%;
+  height: 17%;
   display: flex;
   flex-direction: row;
-  margin-top: 2%;
+  background-color: yellowgreen;
+  border-radius: 15rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.walletImage{
+  height: 90rpx;
+  width: 90rpx;
+  margin-left: 1%;
+}
+.walletTitle{
+  margin-left: 60%;
+  color: white;
+}
+.exitUser{
+  background-color: yellowgreen;
+  width: 30%;
+  margin-top: 3%;
+  height: 10%;
+  display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
-
-.walletimage{
-  height: 50rpx;
-  width: 50rpx;
+.exitTitle{
+  color: white;
+  font-size: 39rpx;
 }
-
-
-
-
-
-
-
-
+.Load{
+  width: 50%;
+  height: 16%;
+  margin-top: 20%;
+  background-color: yellowgreen;
+  border-radius: 20rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.register{
+  width: 50%;
+  height: 16%;
+  margin-top: 8%;
+  background-color: yellowgreen;
+  border-radius: 20rpx;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.Loading{
+  color: white;
+  font-size: 38rpx;
+}
+.AInputBox{
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 30%;
+  margin-top: 3%;
+}
+.pleaseTitle{
+  font-size: 36rpx;
+  font-weight: 550;
+  margin-left: 3%;
+  color: yellowgreen;
+}
+.inputContainer{
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-top: 1%;
+}
+.RegisterInput{
+  border:4rpx solid #9ACD32;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  height: 90%;
+  width: 85%;
+  border-radius: 20rpx;
+  font-size: 40rpx;
+  font-weight: 550;
+  color: #9ACD32;
+}
+.ifrightimage{
+  height: 75rpx;
+  width: 75rpx;
+}
+.registerButton1{
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 50%;margin-top: 5%;
+  height: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30rpx;
+}
+.registerButton{
+  background-color: yellowgreen;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 50%;margin-top: 5%;
+  height: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30rpx;
+}
+.cannotRegisterTitle{
+  font-size: 38rpx;
+  font-weight: 550;
+  color: #9ACD32;
+}
+.canRegisterTitle{
+  font-size: 38rpx;
+  font-weight: 550;
+  color: white;
+}
+/*主页板块e*/

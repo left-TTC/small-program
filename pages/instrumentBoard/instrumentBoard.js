@@ -20,13 +20,12 @@ Page({
     time:0,
     timer:null,
     price:'10coins',
-    batteryPower:'检测中',
-    batteryPowerPercentage:80,
+    batteryPowerPercentage:100,
     mileageavailable:'检测中',
     Batterylockstate:-1,
     ifConnect:0,          //启动状态
     devicecon:0,          //是否连接到车    
-    showingModal:true,
+    showingModal:true,  //连接弹窗
     showingUserModal:false,        //用户界面弹窗
     ifUserLoad:false,      //用户是否登录
     ifRegisterAction:false,       //是否是注册行为 
@@ -39,21 +38,19 @@ Page({
     mnemonicOK:false,//说明助记词可以使用
     privateKey:'',//私钥，由助记词生成   ns
     wallet:'',//钱包，相当于账户     ns
-    userName:'bikeuser',//用户名   ns
+    userName:'BIKEUSER',//用户名   ns
     userPhoto:'',//用户头像     ns
     lastlyConnectBLE:'',    //ns
     lastlyConnectBLEID:'',//上次连接设备的名字 ns
+    connectingName:'未连接',      //最多显示6个字
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.loadDevices();
     this.wheatherHaveWallet();
-    this.setData({
-      ifCounldConnect: getApp().ifCounldConnect
-    });
+    this.updateCircle(this.data.batteryPowerPercentage);
   },
 
   //读取内存是否有账号
@@ -91,9 +88,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
-    wx.setNavigationBarTitle({
-      title:"smart bike"
-    }); 
+    this.loadDevices();
   },
 
   /**
@@ -103,7 +98,7 @@ Page({
     this.checkConnectionStatusInterval = setInterval(() => {
       const currentApp = getApp();
       console.log('正在计时')
-      if (this.data.ifCounldConnect !== currentApp.ifCounldConnect) {
+      if (currentApp.ifCounldConnect === true) {
         this.automaticLink();
         clearInterval(this.checkConnectionStatusInterval);
       }
@@ -114,7 +109,7 @@ Page({
   automaticLink:function(){
     const lastlyConnectBLE = wx.getStorageSync('lastlyConnectBLE');
     const lastlyConnectBLEID = wx.getStorageSync('lastlyConnectBLEID');
-    if(lastlyConnectBLE){
+    if(lastlyConnectBLE != '' && this.data.ifUserLoad === true){
         this.DoforDevice(lastlyConnectBLE,lastlyConnectBLEID)
         this.setData({
           showingModal:false
@@ -187,12 +182,10 @@ DoforDevice:function(deviceID,name){
       this.getServices(deviceID);           //2.获取服务
       this.setData({
         lastlyConnectBLE:deviceID,
-        lastlyConnectBLEID:name
+        lastlyConnectBLEID:name,
+        connectingName:name
       })
-      console.log(this.data.lastlyConnectBLE)
-      wx.setNavigationBarTitle({
-        title: name,
-      })
+      console.log(this.data.connectingName)
     },
   })
 },
@@ -323,16 +316,68 @@ sendCommand: function(event) {
   this.sendData(command);
 },
 
-sendsecretCommand:function(event){
+sendsecretCommandToOpenBatteryLock:function(event){
   const command = event.currentTarget.dataset.command;
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
-    command,command
+    command:command
   }
   var cmdstr=JSON.stringify(cmd)
   const signature =  this.data.wallet.signMessageSync(cmdstr);
-  this.sendData(signature)
-  console.log(signature);
+  const obj = {
+    cmd:cmdstr,
+    PubKey: this.data.wallet.signingKey.publicKey,
+    signature:signature,
+    address:this.data.wallet.address
+};
+  const jsonString = JSON.stringify(obj) + '\n';
+  console.log(jsonString);
+  this.sendData(jsonString);
+},
+
+sendsecretCommandToStartDrive:function(event){
+  const command = event.currentTarget.dataset.command;
+  const cmd={
+    TimeStamp:Math.floor(Date.now() / 1000),
+    command:command
+  }
+  var cmdstr=JSON.stringify(cmd)
+  const signature =  this.data.wallet.signMessageSync(cmdstr);
+  const obj = {
+    cmd:cmdstr,
+    PubKey: this.data.wallet.signingKey.publicKey,
+    signature:signature,
+    address:this.data.wallet.address
+};
+const jsonString = JSON.stringify(obj) + '\n';
+console.log(jsonString);
+this.sendData(jsonString);
+  this.setData({
+    ifConnect:1
+  })
+},
+
+sendsecretCommandToStopDrive:function(event){
+  const command = event.currentTarget.dataset.command;
+  const cmd={
+    TimeStamp:Math.floor(Date.now() / 1000),
+    command:command
+  }
+  var cmdstr=JSON.stringify(cmd)
+  const signature =  this.data.wallet.signMessageSync(cmdstr);
+  const obj = {
+    cmd:cmdstr,
+    PubKey: this.data.wallet.signingKey.publicKey,
+    signature:signature,
+    address:this.data.wallet.address
+};
+const jsonString = JSON.stringify(obj) + '\n';
+console.log(jsonString);
+this.sendData(jsonString);
+  this.stoptimer();
+  this.setData({
+    ifConnect:0
+  })
 },
 
 sendData: function(command) {
@@ -366,30 +411,6 @@ bufferToString: function(buffer) {
   return String.fromCharCode.apply(null, dataView);
 },
 
-bikelockCommand:function(event){
-  const command = event.currentTarget.dataset.command; 
-  console.log(command);
-  this.sendData(command);
-},
-
-bikelockCommandstart:function(event){
-  const command = event.currentTarget.dataset.command; 
-  console.log(command);
-  this.sendData(command);
-  this.setData({
-    ifConnect:1
-  })
-},
-
-bikelockCommandclose:function(event){
-  const command = event.currentTarget.dataset.command; 
-  console.log(command);
-  this.sendData(command);
-  this.stoptimer();
-  this.setData({
-    ifConnect:0
-  })
-},
 //--------------------用于刷新信号-------------------------
 startSignalStrengthUpdate: function() {
   this.setData({
@@ -433,6 +454,7 @@ getDeviceRSSI: function() {
         else{
           percentage = 0
         }
+        this.animateCircle(percentage);
         this.setData({
           batteryPowerPercentage:percentage
         });
@@ -450,12 +472,9 @@ getDeviceRSSI: function() {
   speedCalculate:function(data1,data2){
     const calculatedValue = ((data1-data2)*3.14*0.4)/0.3/3.6;
     const speed = Math.ceil(calculatedValue); // 向上取整
-
     const speed1 = Math.floor(speed / 10); // 十位数
     const speed2 = speed % 10; // 个位数
-
     const combinedSpeed = `${speed1}${speed2}`;
-
     this.setData({
       speed:combinedSpeed
      });
@@ -465,7 +484,6 @@ getDeviceRSSI: function() {
     this.speedUpdateInterval = setInterval(() => {
       const data1 = this.data.rotate_Counter;
       const data2 = this.data.lastlyrotate_Counter;
-
       this.speedCalculate(data1,data2);
     },300);
   },
@@ -505,17 +523,17 @@ getDeviceRSSI: function() {
   },
 
   //--------------------连接弹窗------------------
-  showModal:function() {
+  showModal() {
     this.setData({
       showingModal: true
     });
-    console.log(this.data.showingModal)
   },
 
   hideModal:function() {
     this.setData({
       showingModal:false
     })
+    this.updateCircle(this.data.batteryPowerPercentage);
   },
 
   showUserModal:function(){
@@ -528,6 +546,7 @@ getDeviceRSSI: function() {
     this.setData({
       showingUserModal:false
     })
+    this.updateCircle(this.data.batteryPowerPercentage);
   },
 
   showRegisterModal:function(){
@@ -701,5 +720,65 @@ getDeviceRSSI: function() {
     return decrypted.toString(CryptoJS.enc.Utf8);            //返回解密后的私钥
 },
 
+//电池圈的组件
+changeBatteryLevel: function() {
+  const newLevel = Math.floor(Math.random() * 101); // 随机生成 0-100 的电量
+  this.animateCircle(newLevel); // 启动动画
+},
+// 动画填充电量
+animateCircle: function(newLevel) {
+  const targetLevel = newLevel; // 目标电量
+  const duration = 1000; // 动画持续时间（毫秒）
+  const frameCount = 30; // 帧数
+  const startLevel = this.data.currentLevel; // 初始电量
+  const change = targetLevel - startLevel; // 变化量
+  let currentFrame = 0; // 记录帧数
 
+  const easeInOutQuad = (t) => {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  };
+
+  const animate = () => {
+    if (currentFrame < frameCount) {
+      const progress = currentFrame / frameCount; // 当前进度
+      const easedProgress = easeInOutQuad(progress); // 应用缓动效果
+      const newLevel = startLevel + change * easedProgress; // 计算新的电量
+
+      this.setData({ currentLevel: newLevel }); // 更新当前电量
+      this.updateCircle((newLevel / 100) * 2 * Math.PI); // 绘制当前电量的角度
+
+      currentFrame++;
+      setTimeout(animate, duration / frameCount); // 设置下一帧
+    } else {
+      this.setData({ currentLevel: targetLevel }); // 确保最终值
+      this.updateCircle((targetLevel / 100) * 2 * Math.PI); // 最后一次更新
+    }
+  };
+
+  this.setData({ currentLevel: 0 }); // 确保从 0 开始
+  animate(); // 启动动画
+},
+updateCircle: function(angle) {
+  const ctx = wx.createCanvasContext('batterycanvas', this);
+  // 获取容器的尺寸
+  const query = wx.createSelectorQuery();
+  query.select('.batteryBlock').boundingClientRect((rect) => {
+    const centerX = rect.width / 2;  // 容器宽度的一半
+    const centerY = rect.height /5*2; // 容器高度的一半
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    // 绘制背景圈
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 50, 0, 2 * Math.PI);
+    ctx.setStrokeStyle('#ebf5ed');
+    ctx.setLineWidth(15);
+    ctx.stroke();
+    // 绘制电量圈
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 50, -Math.PI / 2, angle - Math.PI / 2);
+    ctx.setStrokeStyle('#9ACD32');
+    ctx.setLineWidth(15);
+    ctx.stroke();
+    ctx.draw();
+  }).exec();
+}
 })

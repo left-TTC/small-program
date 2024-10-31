@@ -5,13 +5,11 @@
 
   "window": {
     "backgroundTextStyle":"dark",
-    "navigationBarTitleText": "bike",
-    "navigationBarBackgroundColor": "#99BBFF", 
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#99BBFF"    
+    "navigationBarTitleText": "SMARTBIKE",
+    "navigationBarBackgroundColor": "#e4f0ed", 
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#e6f2ec" 
   },
-
-  
 
   "permission":{
       "bluetooth":{
