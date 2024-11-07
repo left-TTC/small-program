@@ -113,6 +113,8 @@
       </view>
   </view>
 </view>
+<!--test-->
+<button class="textButton" bind:tap="sendCommand" data-command="Clean">Clean</button>
 </view>
 <!--连接弹窗-->
 <view wx:if="{{showingModal === true && ifUserLoad === true}}" class="connectWindow">
@@ -154,17 +156,8 @@
         <text class="walletTitle">钱包</text>
       </button>
     </view>
-    <!--登录与创建-->
-    <view wx:if="{{ifUserLoad === false && ifRegisterAction === false && ifLoadAction === false}}" class="userInformationBox">
-      <button class="Load" bind:tap="showLoadrModal">
-        <text class="Loading">登录</text>
-      </button>
-      <button class="register" bind:tap="showRegisterModal">
-        <text class="Loading">创建</text>
-      </button>
-    </view>
     <!--register-->
-    <view wx:if="{{ifUserLoad === false && ifRegisterAction === true && ifLoadAction === false}}"
+    <view wx:if="{{ifUserLoad === false && ifRegisterAction === true}}"
     class="userInformationBox">
       <view class="AInputBox">
         <text class="pleaseTitle">助记词*</text>
@@ -175,16 +168,24 @@
         </view>
       </view>
       <view class="AInputBox">
+        <text class="pleaseTitle">确认助记词*</text>
+        <view class="inputContainer">
+          <input class="RegisterInput" placeholder="请再次输入" value="{{mnemonic1}}" 
+          bindinput="onInputRegister1" />
+          <image class="ifrightimage" src="{{iconSrc3}}" />
+        </view>
+      </view>
+      <view class="AInputBox">
         <text class="pleaseTitle">密码*</text>
         <view class="inputContainer">
           <input class="RegisterInput" placeholder="输入6位数字密码" value="{{password1}}" bindinput="onInputPassword"/>
             <image class="ifrightimage" src="{{iconSrc2}}" ></image>
         </view>
       </view>
-      <view wx:if="{{passwordOK === false || mnemonicOK === false}}" class="registerButton1">
+      <view wx:if="{{passwordOK === false || mnemonicOK === false || mnemonicAgain === false}}" class="registerButton1">
         <text class="cannotRegisterTitle">创建账号</text>
       </view>
-      <button wx:if="{{passwordOK === true && mnemonicOK === true}}" class="registerButton" bind:tap="onRegister">
+      <button wx:if="{{passwordOK === true && mnemonicOK === true && mnemonicAgainOK === true}}" class="registerButton" bind:tap="onRegister">
         <text class="canRegisterTitle">创建账号</text>
       </button>
     </view>
@@ -194,292 +195,3 @@
   </view>
 </view>
 
-<!--
-  <view class="prompt" wx:if="{{devicecon === 0}}">
-    <text class="connect-prompt">使用前请先连接设备</text>
-    <button class="connect-buttonchoose" bindtap = "showModal">
-      <text class = "connect-button-script">连接</text>
-    </button>
-  </view>
-  <view wx:if="{{showingModal === true}}" class="devicechoosePage">
-    <view class="blackBlock">
-    </view>
-    <view class="devicechooseBlock">
-      <view class="devicechooseBlockTitle">
-        <button class="backbutton" bind:tap="hideModal">
-          <image class="backimage" src="/image/back.png"></image>
-        </button>
-        <view class="backtitleBox">
-          <text class="backTitle">周围车辆</text>
-        </view>
-      </view>
-      <view class="deviceChooseLine"></view>
-      <view class="devicechooseList">
-        <view  class="device-item"> 
-          <button class = "itemStyle" bindtap = "aroundDeviceBluetoothConnect"data-device="{{item}}">
-            <view class = "device">
-              <view class="devicename">
-                <text class = "itemchar">{{item.name}}XLBLE</text>
-              </view>
-              <view class="devicePrice">
-                <text class = "price">{{price}}/小时</text>
-              </view>
-            </view>
-          </button>
-        </view>
-      </view>
-    </view>
-  </view>
-  <view class="fristBox">
-    <view class="speedBlock">
-      <view class="connectdeviceNAME">
-        <text class="connectdeviceNAMETitle">{{connectingName}}</text>
-      </view>
-      <view class="speedBox">
-        <view class="speedbigBox">
-          <text class = "speedbig">{{speed}}</text>
-        </view>
-        <view class="speedsmallBox">
-          <text class = "speedsmall">Km/h</text>
-        </view>
-      </view>
-      <view class="journeyBox">
-        <text wx:if="{{devicecon === 1}}" class="longtittle">可行驶:</text>
-        <text wx:if="{{devicecon === 1}}" class="long">{{mileageavailable}}</text>
-      </view>
-    </view>
-    <view wx:if="{{devicecon === 0}}" class="batteryBlock">
-    </view>
-    <view wx:if="{{devicecon === 1}}" class="batteryBlock">
-      <view  class = "batteryBlockList">
-          <view class="prepositonScript">
-            <view wx:if="{{batteryPowerPercentage >= 75}}">
-              <image class="batterypowershow" src = "/image/1.png"></image>
-            </view>
-            <view wx:if="{{batteryPowerPercentage >= 50 && batteryPowerPercentage < 75}}">
-              <image class="batterypowershow" src = "/image/2.png"></image>
-            </view>
-            <view wx:if="{{batteryPowerPercentage >= 25 && batteryPowerPercentage < 50}}">
-              <image class="batterypowershow" src = "/image/3.png"></image>
-            </view>
-            <view wx:if="{{batteryPowerPercentage < 25}}">
-              <image class="batterypowershow" src = "/image/4.png"></image>
-            </view>
-          </view>
-          <view class = "powershow">
-            <text class = "powertittle">{{batteryPower}}V</text>
-            <text class = "powertittle">{{batteryPowerPercentage}}%</text>
-          </view>
-      </view>
-      <view  class="signalList">
-        <view class="prepositonScript">
-          <text class="signaltittle">信号</text>
-        </view>
-        <view wx:if = "{{device.signalStrength > -65}}">
-          <image class = "signalima" src = "/image/good.png"></image>
-        </view>
-        <view wx:if = "{{device.signalStrength <= -65 && device.signalStrength>-75}}">
-          <image class = "signalima" src = "/image/high.png"></image>
-        </view>
-        <view wx:if = "{{device.signalStrength <= -75 && device.signalStrength>-80}}">
-          <image class = "signalima" src = "/image/middle.png"></image>
-        </view>
-        <view wx:if = "{{device.signalStrength <= -80}}">
-          <image class = "signalima" src = "/image/low.png"></image>
-        </view>
-      </view>
-      <view class="timeList">
-        <view class="prepositonScript">
-          <text class="signaltittle">用时</text>
-        </view>
-        <view class="timeAndDistance">
-          <text class = "time1">{{time}}</text>
-          <text class = "time2">min</text>
-        </view>
-      </view>
-      <view class="distanceList">
-        <view class="prepositonScript">
-          <text class="signaltittle">里程</text>
-        </view>
-        <view class="timeAndDistance">
-          <text class = "distance1">{{itinerary}}</text>
-          <text class = "distance2">Km</text>
-        </view>
-      </view>
-    </view>
-  </view>
-  <view class="secondBox">
-    <view class="batteyList">  
-      <view class="batteryState">
-        <text class="batterystatetitle">·座舱锁状态·</text>
-          <view wx:if="{{Batterylockstate === 1}}" class="batterySeize">
-            <view class="stateshow">
-              <image class="batterystateimage" src="/image/batteryon.png"></image>
-            </view>
-            <view class="statemind">
-              <text class="batterystatemid">锁已开</text>
-            </view>
-          </view>
-          <view wx:if="{{Batterylockstate === 0}}"class="batterySeize" >
-            <view class="stateshow">
-              <image class="batterystateimage" src="/image/battryoff.png"></image>
-            </view>
-            <view class="statemind">
-              <text class="batterystatemid">锁已关</text>
-            </view>
-          </view>
-          <view wx:if="{{Batterylockstate === -1}}"class="batterySeize">
-            <view class="stateshow">
-            </view>
-            <view class="statemind">
-              <text class="noLink">未连接</text>
-            </view>
-          </view>
-      </view> 
-      <view class="dotobattery">
-        <text class="whatcando">·可执行动作·</text>
-          <view wx:if="{{Batterylockstate === 0}}" class="buttonseize">
-            <button class="batterycommandleft" bind:tap="bikelockCommand" data-command="batterylock$">
-              <image class="openlockimage" src="/image/on.png"></image>
-            </button>
-            <view class="titleBox">
-              <text class="batterycommandtitle">点击开锁</text>
-            </view>
-          </view>
-          <view wx:if="{{Batterylockstate === 1}}" class="buttonseize">
-            <button class="batterycommandleft1">
-              <image class="openlockimage" src="/image/on.png"></image>
-            </button>
-            <view class="titleBox">
-              <text class="batterycommandtitle">不可执行</text>
-            </view>
-          </view>
-          <view wx:if="{{Batterylockstate === -1}}" class="buttonseize">
-            <button class="batterycommandleft1" >
-              <image class="openlockimage" src="/image/on.png"></image>
-            </button>
-            <view class="titleBox">
-              <text class="batterycommandtitle">不可执行</text>
-            </view>
-          </view>
-      </view>  
-    </view>
-    <view class="bikelockList">
-      <view class="b1">
-        <button wx:if="{{devicecon === 1}}" class="changebutton" bind:tap="changeDevice">
-          <image class="changeimage" src="/image/change.png"></image>
-        </button>
-        <view  wx:if="{{devicecon === 1}}" class="changeScript">
-          <text class="changetitle">切换设备</text>
-        </view>
-      </view>
-      <view class="b2">
-        <view wx:if="{{ifConnect === 0 && devicecon === 0}}" class="buttonBox">
-          <button class="lockbutton1">
-            <image class="startimage" src="/image/start.png"></image>
-          </button>
-          <view class="lockremind">
-            <text class="lockremindtitle1">无法启动-请先连接</text>
-          </view>
-        </view>
-        <view wx:if="{{ifConnect === 0 && devicecon === 1}}"class="buttonBox">
-          <button class="lockbutton2" bind:tap="bikelockCommandstart" data-command="bikelock$">
-            <image class="startimage" src="/image/start.png"></image>
-          </button>
-          <view class="lockremind">
-            <text class="lockremindtitle2">启动</text>
-          </view>
-        </view>
-        <view wx:if="{{ifConnect === 1 && devicecon === 1}}"class="buttonBox">
-          <button class="lockbutton3"bind:tap="bikelockCommandclose" data-command="unbikelock$">
-            <image class="closeimage" src="/image/close.png"></image>
-          </button>
-          <view class="lockremind">
-            <text class="lockremindtitle3">停止骑行</text>
-          </view>
-        </view>
-      </view>
-    </view>
-    <view class="userList">       
-      <button class="user" bind:tap="showUserModal">
-        <image class="userpage" src="/image/user.png"></image>
-      </button>
-    </view>
-  </view>
-  <view wx:if="{{showingUserModal === true}}" class="userBox">
-    <button class="leftBox" bind:tap="hideUserModal">
-    </button>
-    <view class="rightBox">
-      <view class="userBackGroud"></view>
-      <view class="UserInformationBox">
-        <view wx:if="{{ifUserLoad === false}}" class="userTrueBox">
-          <view class="userNameAndPhoto">
-            <view class="userPhoto">
-              <image class="headPhoto" src="/image/headSculpture.png"></image>
-            </view>
-            <view class="username">
-              <text class="usernametitle">未登录</text>
-            </view>
-          </view>
-          <view class="nameAndInformationLine"></view>
-          <view class="aboutUserWithNoLoad">
-            <button class="userLoad" bind:tap="userLoad">验证</button>
-            <button class="userLoad" bind:tap="userRegister">创建</button>
-          </view>
-        </view>
-        <view wx:if="{{ifUserLoad === true}}">
-          <view class="userNameAndPhoto">
-            <button wx:if="{{userPhoto === ''}}" class="userPhoto">
-              <view class="changeHeadBox">
-                <text class="headChange">点击更换</text>
-              </view>
-            </button>
-            <view wx:if="{{userPhoto != '' }}" class="userPhoto">
-              <image class="headPhoto" src="{{userPhoto}}"></image>
-            </view>
-            <view class="username">
-              <text class="usernametitle1">{{userName}}</text>
-            </view>
-            <button class="changename">
-              <image class="changenameimage" src="/image/changename.png"></image>
-            </button>
-          </view>
-          <view class="nameAndInformationLine"></view>
-          <view class="aboutUserInformationBox">
-            <button class="aBox" bind:tap="walletShow">
-              <image class="walletimage" src="/image/wallet.png"></image>
-              <text class="wallettitle">钱包</text>
-            </button>
-          </view>
-        </view>
-      </view>
-    </view>
-  </view>
-  <view wx:if="{{ifLoadAction===true || ifRegisterAction===true}}" class="registerAndLoadBox">
-    <button class="upBox" bind:tap="exitRegisterOrLoad"></button>
-    <view class="downBox">
-      <view wx:if="{{ifLoadAction}}" class="loadACtion" class="loadAction">
-        
-      </view>
-      <view wx:if="{{ifRegisterAction}}" class="registerActon">
-        <view class="rememberBox">
-          <text class="RegisterText">助记词*</text>
-          <view class="inputAndJudge">
-            <input class="RegisterInput" placeholder="请输入大于10个单位的任意字符" value="{{mnemonic1}}" bindinput="onInputRegister"/>
-            <image class="ifrightimage" src="{{iconSrc1}}" ></image>
-          </view>
-        </view>
-        <view class="secretBox">
-          <text class="RegisterText">密码*</text>
-          <view class="inputAndJudge">
-            <input class="RegisterInput" placeholder="请输入6位数字密码" value="{{password1}}" bindinput="onInputPassword"/>
-            <image class="ifrightimage" src="{{iconSrc2}}" ></image>
-          </view>
-        </view>
-      </view>
-      <view wx:if="{{passwordOK === false || mnemonicOK === false}}" class="registerButton1">创建账号</view>
-      <button wx:if="{{passwordOK === true && mnemonicOK === true}}" class="registerButton" bind:tap="onRegister">创建账号</button>
-    </view>
-  </view>
-</view>
--->

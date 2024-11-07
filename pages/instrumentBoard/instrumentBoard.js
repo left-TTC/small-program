@@ -29,20 +29,24 @@ Page({
     showingUserModal:false,        //用户界面弹窗
     ifUserLoad:false,      //用户是否登录
     ifRegisterAction:false,       //是否是注册行为 
-    ifLoadAction:false,          //是否是登录行为
     mnemonic:'',//助记词
     password:'',//密码
+    mnemonicAgain:'',
     iconSrc1:'',//展示助记词格式是否正确图片的路径
     iconSrc2:'',//展示密码格式是否正确图片的路径
+    iconSrc3:'',//展示确认助记词是否正确的路径
     passwordOK:false,//说明密码可以使用
     mnemonicOK:false,//说明助记词可以使用
+    mnemonicAgainOK:false,//说明再次输入没有问题
     privateKey:'',//私钥，由助记词生成   ns
     wallet:'',//钱包，相当于账户     ns
     userName:'BIKEUSER',//用户名   ns
     userPhoto:'',//用户头像     ns
     lastlyConnectBLE:'',    //ns
-    lastlyConnectBLEID:'',//上次连接设备的名字 ns
-    connectingName:'未连接',      //最多显示6个字
+    connectingName:'检测中',      //最多显示6个字
+    UUIDOfSTM:'',//本次链接设备的UUID(STM32的CPU序列号)
+    UsingDeviceChat:'',
+    UsingDevicePhone:''
   },
 
   /**
@@ -64,9 +68,13 @@ Page({
       })
       this.updateLoadUser();
   } else {
-      // 如果钱包地址不存在
+      // 如果钱包地址不存在,就代表没有注册，直接弹出注册表
       console.log('没有存储钱包地址');
-      return false; // 返回 false，表示没有钱包地址
+      this.setData({
+        showingUserModal:true,
+        ifRegisterAction:true
+      })
+      // 返回 false，表示没有钱包地址 
   }
   },
 
@@ -74,10 +82,8 @@ Page({
     const encryptPrivateKey = wx.getStorageSync('encryptedPrivateKeyEncryptedn');  //调取私钥
     const iv = wx.getStorageSync('encryptedPrivateKeyIv');   //调取iv
     const passWord = wx.getStorageSync('passWord');
-
     const privateKey = this.decryptPrivateKey(encryptPrivateKey,iv,passWord);
     const wallet = new ethers.Wallet(privateKey);
-
     this.setData({              //上号更新私钥和完整钱包
       privateKey:privateKey,
       wallet:wallet,
@@ -97,7 +103,6 @@ Page({
   onShow() {
     this.checkConnectionStatusInterval = setInterval(() => {
       const currentApp = getApp();
-      console.log('正在计时')
       if (currentApp.ifCounldConnect === true) {
         this.automaticLink();
         clearInterval(this.checkConnectionStatusInterval);
@@ -108,9 +113,8 @@ Page({
   //自动连接最后一次使用的设备（如果在范围内）
   automaticLink:function(){
     const lastlyConnectBLE = wx.getStorageSync('lastlyConnectBLE');
-    const lastlyConnectBLEID = wx.getStorageSync('lastlyConnectBLEID');
     if(lastlyConnectBLE != '' && this.data.ifUserLoad === true){
-        this.DoforDevice(lastlyConnectBLE,lastlyConnectBLEID)
+        this.DoforDevice(lastlyConnectBLE)
         this.setData({
           showingModal:false
         })
@@ -182,7 +186,6 @@ DoforDevice:function(deviceID,name){
       this.getServices(deviceID);           //2.获取服务
       this.setData({
         lastlyConnectBLE:deviceID,
-        lastlyConnectBLEID:name,
         connectingName:name
       })
       console.log(this.data.connectingName)
@@ -232,10 +235,8 @@ updateDeviceInformation: function(deviceId, serviceId, characteristicIds) {
     this.listentoBlue();
     this.startSignalStrengthUpdate();
     wx.setStorageSync('lastlyConnectBLE', this.data.lastlyConnectBLE);
-    wx.setStorageSync('lastlyConnectBLEID', this.data.lastlyConnectBLEID);
   });
 },
-
 //------------------用于蓝牙设备功能的启用------------------
 //收取信息
 listentoBlue:function(){
@@ -250,69 +251,105 @@ listentoBlue:function(){
       })
     },
   });
-
     wx.onBLECharacteristicValueChange((characteristic) => {
       const data = this.bufferToString(characteristic.value); 
       console.log(data);
       this.judgelisten(data);
       });
   },
-
   judgelisten:function(data){
-    if(data.includes('battery2')){
-      this.setData({
-        Batterylockstate:0          //意味着此时锁是关着的
-      })
+    try{
+      const parsedData = JSON.parse(data);
+      console.log(parsedData);
+      if(parsedData.Name && parsedData.WalletAddress){
+        this.handleUserInfo(parsedData);
+      }else if(parsedData.BatteryState){
+        this.handleDeviceStatus(parsedData);
+      }
+    }catch{
+      console.log("errorJSON")
+      this.DoToOtherCommand(data);
     }
-    else if(data.includes('battery1')){         
-      this.setData({
-        Batterylockstate:1          //恰恰相反
-      })
-    }
-    else if(data.includes('battery3')){         
+  },
+  handleUserInfo:function(data){
+    const name = data.Name;
+    //const walletAddress = data.WalletAddress;
+    //const timestamp = data.TimeStamp;
+    const userWechat = data.UserWechat;
+    const userPhone = data.UserPhone;
+    console.log(`用户姓名: ${name}`);
+    console.log(`微信号: ${userWechat}`);
+    console.log(`手机号: ${userPhone}`);
+    this.setData({
+      connectingName:name,
+      UsingDeviceChat:userWechat,
+      UsingDevicePhone:userPhone
+    })
+  },
+  handleDeviceStatus:function(data){
+    const batteryVoltage = data.BatteryVoltage;
+    const batteryState = data.BatteryState;
+    const rotate = data.Rotate;
+    const uuid = data.UUID;
+    console.log(`电池电压: ${batteryVoltage}`);
+    console.log(`电池状态: ${batteryState}`);
+    console.log(`旋转状态: ${rotate}`);
+    console.log(`设备 UUID: ${uuid}`);
+    this.DoToBatteryVoltage(batteryVoltage);
+    this.DoToBatteryState(batteryState);
+    this.DoToRatate(rotate);
+    this.setData({
+      UUIDOfSTM:uuid
+    })
+  },
+  DoToOtherCommand:function(data){
+    if(data.includes('ready')){
+      this.startTimer();                        //如果回应已经开始供电，则开始计时
+    }else if(data.includes('battery3')){         
       wx.showToast({
         title: '开锁失败了哦，找找有什么问题吧',
         icon: 'none',
         duration: 1000,
       });
-    }
-    else if(data.includes('battery4')){         
+    }else if(data.includes('battery4')){         
       wx.showToast({
         title: '关锁失败了哦，再试一次',
         icon: 'none',
         duration: 1000,
       });
     }
-    if (data.includes('BV:')) {
-      const match = data.match(/BV:\s*(\d+(\.\d+)?)/);
-      if (match) {
-        const Power = match[1];  
-        this.setData({
-          batteryPower: Power
-        });
-        this.doTobatteryPower(Power);
-      }
+  },
+  DoToBatteryVoltage:function(data){
+    const match = data.match(/BatteryVoltage:\s*(\d+(\.\d+)?)/);
+    console.log(`BatteryVoltage:${match}`)
+    if (match) {
+      const Power = match[1];  
+      this.doTobatteryPower(Power);
     }
-    if(data.includes('R:')){               //将轮转数提取出来
-      console.log('have')
+  },
+  DoToBatteryState:function(data){
+    if(data === 'battery1'){
+      this.setData({Batterylockstate:1})
+    }else if(data === 'battery2'){
+      this.setData({Batterylockstate:0})
+    }
+  },
+  DoToRatate:function(data){
+    this.setData({
+      lastlyrotate_Counter:this.data.rotate_Counter,   //保留上一次的值
+    });
+    const mileageMatch = data.match(/R:\s*(\d+)/);
+    if (mileageMatch) {
+      const mileage = parseInt(mileageMatch[1], 10);
       this.setData({
-        lastlyrotate_Counter:this.data.rotate_Counter,   //保留上一次的值
+        rotate_Counter: mileage
       });
-      const mileageMatch = data.match(/R:\s*(\d+)/);
-      if (mileageMatch) {
-        const mileage = parseInt(mileageMatch[1], 10);
-        this.setData({
-          rotate_Counter: mileage
-        });
-      }
-    }
-    if(data.includes('ready')){
-      this.startTimer();                        //如果回应已经开始供电，则开始计时
     }
   },
 //发信息
 sendCommand: function(event) {  
-  const command = event.currentTarget.dataset.command; 
+  const command = event.currentTarget.dataset.command + '\n'; 
+  console.log(command);
   this.sendData(command);
 },
 
@@ -320,7 +357,8 @@ sendsecretCommandToOpenBatteryLock:function(event){
   const command = event.currentTarget.dataset.command;
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
-    command:command
+    command:command,
+    UUID:this.data.UUIDOfSTM
   }
   var cmdstr=JSON.stringify(cmd)
   const signature =  this.data.wallet.signMessageSync(cmdstr);
@@ -339,7 +377,8 @@ sendsecretCommandToStartDrive:function(event){
   const command = event.currentTarget.dataset.command;
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
-    command:command
+    command:command,
+    UUID:this.data.UUIDOfSTM
   }
   var cmdstr=JSON.stringify(cmd)
   const signature =  this.data.wallet.signMessageSync(cmdstr);
@@ -356,12 +395,12 @@ this.sendData(jsonString);
     ifConnect:1
   })
 },
-
 sendsecretCommandToStopDrive:function(event){
   const command = event.currentTarget.dataset.command;
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
-    command:command
+    command:command,
+    UUID:this.data.UUIDOfSTM
   }
   var cmdstr=JSON.stringify(cmd)
   const signature =  this.data.wallet.signMessageSync(cmdstr);
@@ -379,7 +418,6 @@ this.sendData(jsonString);
     ifConnect:0
   })
 },
-
 sendData: function(command) {
   wx.writeBLECharacteristicValue({
     characteristicId: this.data.characteristicId1,
@@ -395,22 +433,18 @@ sendData: function(command) {
     }
   });
 },
-
 stringToBuffer: function(str) {
   const buffer = new ArrayBuffer(str.length);
   const dataView = new Uint8Array(buffer);
-
   for (let i = 0; i < str.length; i++) {
     dataView[i] = str.charCodeAt(i);
   }
   return buffer;
 },
-
 bufferToString: function(buffer) {
   const dataView = new Uint8Array(buffer);
   return String.fromCharCode.apply(null, dataView);
 },
-
 //--------------------用于刷新信号-------------------------
 startSignalStrengthUpdate: function() {
   this.setData({
@@ -575,7 +609,6 @@ getDeviceRSSI: function() {
 
   exitRegisterOrLoad:function(){
     this.setData({
-      ifLoadAction:false,
       ifRegisterAction:false
     })
   },
@@ -599,11 +632,9 @@ getDeviceRSSI: function() {
 
   onInputRegister:function(event){
     const helpDO = event.detail.value;
-
     this.setData({
       mnemonic:helpDO
     })
-
     if (helpDO.length >= 10){
       this.setData({
         iconSrc1:'/image/right.png',
@@ -618,6 +649,29 @@ getDeviceRSSI: function() {
       this.setData({
         iconSrc1:'/image/error.png',
         mnemonicOK:false
+      })
+    }
+  },
+
+  onInputRegister1:function(event){
+    const helpDO = event.detail.value;
+    this.setData({
+      mnemonicAgain:helpDO
+    })
+    if (helpDO === this.data.mnemonic){
+      this.setData({
+        iconSrc3:'/image/right.png',
+        mnemonicAgainOK:true
+      })
+    }else if(helpDO.length === 0){
+      this.setData({
+        iconSrc3:'',
+        mnemonicAgainOK:false
+      })
+    }else{
+      this.setData({
+        iconSrc3:'/image/error.png',
+        mnemonicAgainOK:false
       })
     }
   },
@@ -650,6 +704,7 @@ getDeviceRSSI: function() {
   walletShow:function(){
     wx.showModal({
       title: '钱包地址',
+      showCancel: false,
       content: `${this.data.wallet.address}`,
   });
   },
@@ -657,7 +712,6 @@ getDeviceRSSI: function() {
   onRegister:function(){//用户点击注册
     const privateKey = ethers.sha256(ethers.toUtf8Bytes(this.data.mnemonic));
     const wallet = new ethers.Wallet(privateKey);
-
     this.setData({                             //此时有数据，相当于已经登录
       privateKey:privateKey,
       wallet:wallet,
@@ -665,19 +719,35 @@ getDeviceRSSI: function() {
     })
     console.log('私钥：',this.data.privateKey);
     console.log('钱包：',this.data.wallet);
-
     const encryptedPrivateKey = this.encryptPrivateKey(privateKey,this.data.password);
     console.log(encryptedPrivateKey);
     const jiemi = this.decryptPrivateKey(encryptedPrivateKey.encrypted,encryptedPrivateKey.iv,this.data.password);
     console.log('jiemi:',jiemi);
-
     wx.setStorageSync('encryptedPrivateKeyIv', encryptedPrivateKey.iv);     //存储iv
     console.log('存储的加密私钥:', encryptedPrivateKey.iv);
     wx.setStorageSync('encryptedPrivateKeyEncryptedn', encryptedPrivateKey.encrypted);//储存私钥
     console.log('存储的IV:', encryptedPrivateKey.encrypted);
     wx.setStorageSync('walletAddress', wallet.address);      //存储钱包地址
     wx.setStorageSync('passWord',this.data.password);     //存储密码
-    this.hideRegisterModal();
+    wx.showModal({
+      title: '用户须知',
+      content: '助记词须妥善保管，遗忘助记词将无法开启车辆',
+      showCancel: false, 
+      confirmText: '我已知晓',
+      complete: (res) => {
+        if (res.confirm) {
+          wx.setClipboardData({
+            data: this.data.mnemonic,
+            success:()=>{
+              wx.showToast({
+                title: '助记词已复制,请自行保存',
+                duration: 2000
+              })
+            }
+          })
+        }
+      }
+    })
     
   },
 //用于生成随机数的方法
