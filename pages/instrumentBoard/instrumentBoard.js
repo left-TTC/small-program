@@ -320,12 +320,7 @@ listentoBlue:function(){
     }
   },
   DoToBatteryVoltage:function(data){
-    const match = data.match(/BatteryVoltage:\s*(\d+(\.\d+)?)/);
-    console.log(`BatteryVoltage:${match}`)
-    if (match) {
-      const Power = match[1];  
-      this.doTobatteryPower(Power);
-    }
+    this.doTobatteryPower(data);
   },
   DoToBatteryState:function(data){
     if(data === 'battery1'){
