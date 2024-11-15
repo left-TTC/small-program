@@ -77,7 +77,6 @@
   color: white;
   font-size: 48rpx;
   width: 55%;
-  overflow: hidden;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 .rightBoxofFrist{
@@ -295,7 +294,6 @@
   font-size: 50rpx;
   font-weight: 600;
   color: white;
-  overflow: hidden; /* 隐藏超出部分 */
   white-space: nowrap; /* 不换行 */
   text-overflow: ellipsis; /* 显示省略号 */
 }
@@ -529,12 +527,14 @@
   height: 65%;
 }
 .wallet{
-  margin-top: 2%;
+  margin-top: 3%;
   width: 90%;
   height: 17%;
   display: flex;
   flex-direction: row;
   background-color: yellowgreen;
+  justify-content: space-between;
+  align-items: center;
   border-radius: 15rpx;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
@@ -544,7 +544,14 @@
   margin-left: 1%;
 }
 .walletTitle{
-  margin-left: 60%;
+  color: white;
+}
+.userInfoImage{
+  height: 70rpx;
+  width: 70rpx;
+  margin-left: 2%;
+}
+.userInfoTitle{
   color: white;
 }
 .exitUser{
@@ -645,8 +652,285 @@
   color: white;
 }
 /*主页板块e*/
-.textButton{
-  background-color: #9ACD32;
-  width: 50%;
-  margin-top: 40rpx;
+/*出租板块s*/
+.rentBox{
+  margin-top: 10%;
+  width: 100%;
+  height: 15%;
 }
+.GiveBox{
+  width: 43.5%;
+  height: 9.5%;
+  position: relative;
+  left:51.5%;
+  top:1.4%
+}
+.rentImage{
+  height: 150rpx;
+  width: 150rpx;
+}
+.notmy{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 50rpx;
+  background-color: yellowgreen;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.notmyGive{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 50rpx;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.giveTitle{
+  color: yellowgreen;
+  font-size: 45rpx;
+  margin-left: 8%;
+  font-weight: 600;
+}
+.giveImage{
+  height: 100rpx;
+  width: 100rpx;
+  margin-left: 10%;
+}
+.myGive{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 50rpx;
+  background-color: yellowgreen;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.giveTitle1{
+  color: white;
+  font-size: 45rpx;
+  margin-left: 12%;
+  font-weight: 600;
+}
+.rentTitle{
+  color: white;
+  font-size: 45rpx;
+  margin-left: 8%;
+  font-weight: 600;
+}
+.rentToImage{
+  height: 100rpx;
+  width: 100rpx;
+  margin-left: 5%;
+}
+.rentTitle1{
+  color: white;
+  font-size: 45rpx;
+  margin-left: 15%;
+  font-weight: 600;
+}
+.noLinkRent{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  border-radius: 50rpx;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.rentTitle2{
+  font-size: 200rpx;
+  color: yellowgreen;
+  margin-bottom: 36%;
+}
+/*出租板块e*/
+/*出借弹窗s*/
+.RentBox{
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  z-index: 1000; /* 确保弹窗在上方 */
+}
+.ThreeBox{
+  width: 80%;
+  height: 50%;
+  background-color: white;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.RentInputContainer {
+  margin: 20px; /* 外边距 */
+  padding: 10px; /* 内边距 */
+  height: 6%;
+  background-color: #f8f8f8; /* 背景色 */
+  border-radius: 10px; /* 圆角 */
+  margin-top: 7%;
+}
+.switchBox{
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  margin: 20px;
+  padding: 10px;
+  height: 8%;
+  overflow: hidden;
+  margin-top: 0%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.datePickerBox{
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  margin: 20px;
+  padding: 10px;
+  height: 8%;
+  margin-top: 0%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.SubmitRentButton{
+  background-color: yellowgreen;
+  width: 40%;
+  margin-top: -2%;
+  border-radius: 30rpx;
+  height: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ExitRentButton{
+  background-color: yellowgreen;
+  width: 40%;
+  border-radius: 30rpx;
+  height: 11%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+/*出借弹窗e*/
+/*微信号和电话号s*/
+.userInformationBox{
+  display: flex;
+  flex-direction: column;
+}
+.PhoneIma{
+  height: 80rpx;
+  width: 80rpx;
+  margin-left: 5%;
+}
+.PhoneBox{
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+  margin-top: 3%;
+}
+.PhoneName{
+  font-size: 33rpx;
+  font-weight: 550;
+  color: #9ACD32;
+}
+.PhoneContainer{
+  background-color: #f8f8f8;
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.InfouseShow{
+  margin-right: 5%;
+  color: #9ACD32;
+  font-size: 32rpx;
+  font-weight: 550;
+}
+.AboutInfoButton{
+  margin-top: 4%;
+  width: 60%;
+  background-color: #9ACD32;
+  height: 20%;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.AboutInfoButtonText{
+  color: white;
+  font-weight: 550;
+}
+.NumberDeclare{
+  width: 85%;
+  background-color: #f8f8f8;
+  height: 40%;
+  margin-top: 2%;
+  border-radius: 30rpx;
+}
+.Declare{
+  font-size: 33rpx;
+  color: #9ACD32;
+}
+.geli{
+  margin-top: 3%;
+  width: 96%;
+  margin-left: 5%;
+}
+.ChangePhoneBox{
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 30%;
+  margin-top: 3%;
+}
+.ChangePhonetext{
+  font-size: 40rpx;
+  font-weight: 550;
+  color: #9ACD32;
+}
+.ChangeInputContainer{
+  width: 100%;
+  background-color: #f8f8f8;
+  height: 55%;
+  margin-top: 2%;
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+}
+.ChangeInputStyle{
+  width: 96%;
+  height: 70%;
+  margin-left: 2%;
+  color: #9ACD32;
+}
+.PhoneAndChatChangeSubumit{
+  height: 16%;
+  position: relative;
+  top: 5%;
+  width: 46%;
+  background-color: #9ACD32;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.SubmitchangeButtontext{
+  font-size: 38rpx;
+  font-weight: 550;
+  color: white;
+}
+/*微信号和电话号e*/

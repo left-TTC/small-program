@@ -4,7 +4,7 @@ App({
   ifCounldConnect:false,
 
   onLaunch: function() {
-    this.initializeBluetooth();         // find BLE device when launch
+    //this.initializeBluetooth();         // find BLE device when launch
   },
   
 
@@ -13,7 +13,6 @@ App({
     wx.openBluetoothAdapter({          //apply for bluetooth search
       success: () => {
         this.bluetoothFind();
-        this.ifCounldConnect = true;
       },
       fail: () => {    
         wx.showToast({
@@ -27,28 +26,30 @@ App({
 
   bluetoothFind: function() {
     wx.startBluetoothDevicesDiscovery({
-      allowDuplicatesKey: true,
+      allowDuplicatesKey: false,
       interval: 3000,
       powerLevel: 0,
       services: [], // 只查找特定服务的设备
       success: () => {
         const pages = getCurrentPages();
         const currentPage = pages[pages.length - 1];
+        this.ifCounldConnect = true;
         wx.onBluetoothDeviceFound((res) => {
           const foundDevices = res.devices.map(device => ({
             deviceID: device.deviceId,
-            name: device.name || "unknown device",
+            name: device.name ,
             signalStrength: device.RSSI || 0
-          }));
-          const existingDevices = Array.isArray(currentPage.data.devices) ? currentPage.data.devices : [];
-          const updatedDevices = existingDevices
-            .filter(existingDevice => 
-              foundDevices.some(foundDevice => foundDevice.deviceID === existingDevice.deviceID) 
-            )
-            .concat(foundDevices.filter(foundDevice => // 添加新发现的设备
-              !existingDevices.some(existingDevice => existingDevice.deviceID === foundDevice.deviceID)
-            ));
-          // 更新设备列表
+          })).filter(device => device.name.startsWith("BIKE_"));
+        const existingDevices = currentPage.data.devices || [];
+        const updatedDevices = [...existingDevices];
+        foundDevices.forEach(foundDevice => {
+          const index = updatedDevices.findIndex(device => device.deviceID === foundDevice.deviceID);
+          if (index === -1) {
+            updatedDevices.push(foundDevice);  // 新设备加入列表
+          } else {
+            updatedDevices[index] = foundDevice;  // 更新已有设备信息
+          }
+        });
           currentPage.setData({
             devices: updatedDevices
           });

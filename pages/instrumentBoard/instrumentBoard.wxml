@@ -33,7 +33,7 @@
   </view>
   <view class="secondBox">
     <view class="leftSecondBox">
-      <button wx:if="{{devicecon === 1}}"  class="changeDeviceBox1" bindtap = "showModal">
+      <button wx:if="{{devicecon === 1}}"  class="changeDeviceBox1" bindtap = "test"><!--showModal-->
         <image class="changeimage" src="/image/change.png"></image>
       </button>
       <view wx:if="{{devicecon === 0}}"  class="changeDeviceBox">
@@ -45,22 +45,35 @@
         <text class = "speedsmall">Km/h</text>
       </view>
       <view class="batteryLockBlock">
-        <text class="lockStateTitle">电池锁状态</text>
+        <text class="lockStateTitle">座舱锁状态</text>
         <view class="lockStateShow" wx:if="{{Batterylockstate === -1}}">
           <text class="StateScript1">...</text>
         </view>
         <view class="lockStateShow" wx:if="{{Batterylockstate === 0}}">
           <text class="StateScript">座舱锁已关闭</text>
         </view>
-        <view class="lockStateShow" wx:if="{{Batterylockstate === 1}}">
+        <view class="lockStateShow" wx:if="{{Batterylockstate === 1 }}">
           <text class="StateScript">座舱锁被打开</text>
         </view>
         <view class="couldnotOpenLockButton" wx:if="{{Batterylockstate === 1 || Batterylockstate === -1}}">
           <text class="couldnotScript">开锁</text>
         </view>
-        <button wx:if="{{Batterylockstate === 0}}" class="couldOpenLockButton" bind:tap="sendsecretCommandToOpenBatteryLock" data-command="batterylock">
+        <button wx:if="{{Batterylockstate === 0 }}" class="couldOpenLockButton" bind:tap="sendsecretCommand" data-command="batterylock">
           <text class="couldnotScript1">开锁</text>
         </button>
+      </view>
+      <view class="rentBox">
+        <button wx:if="{{ifMyDevice === false && devicecon === 1}}" class="notmy">
+          <image class="rentImage" src="/image/rent.png"></image>
+          <text class="rentTitle">借用</text>
+        </button>
+        <button wx:if="{{ifMyDevice === true && devicecon === 1}}" class="notmy" bind:tap="showRentModal" >
+          <image class="rentToImage" src="/image/rentTo.png"></image>
+          <text class="rentTitle1">出借</text>
+        </button>
+        <view wx:if="{{ devicecon === 0}}" class="noLinkRent">
+          <text class="rentTitle2">...</text>
+        </view>
       </view>
     </view>
     <view class="rightSecondBox">
@@ -75,16 +88,16 @@
       </view>
       <view class="signalBlock">
         <view wx:if="{{devicecon === 1}}">
-          <view wx:if = "{{device.signalStrength > -65}}">
+          <view wx:if = "{{device.signalStrength > -75}}">
             <image class = "signalima" src = "/image/good.png"></image>
           </view>
-          <view wx:if = "{{device.signalStrength <= -65 && device.signalStrength>-75}}">
+          <view wx:if = "{{device.signalStrength <= -75 && device.signalStrength>-85}}">
             <image class = "signalima" src = "/image/high.png"></image>
           </view>
-          <view wx:if = "{{device.signalStrength <= -75 && device.signalStrength>-80}}">
+          <view wx:if = "{{device.signalStrength <= -85 && device.signalStrength>-90}}">
             <image class = "signalima" src = "/image/middle.png"></image>
           </view>
-          <view wx:if = "{{device.signalStrength <= -80}}">
+          <view wx:if = "{{device.signalStrength <= -90}}">
             <image class = "signalima" src = "/image/low.png"></image>
           </view>
         </view>
@@ -94,7 +107,8 @@
     </view>
     <view class="timeBlock">
       <view wx:if="{{ifConnect === 1}}">
-          <text class="time1">{{time}}  min</text>
+          <text wx:if="{{ifMyDevice === false}}" class="time1">{{whenRentCanUsedTo}}</text>
+          <text wx:if="{{ifMyDevice === true}}" class="time1">无限制</text>
         </view>
         <view wx:if="{{ifConnect === 0}}">
           <text class="noSiganal">未开始骑行</text>
@@ -104,17 +118,28 @@
         <view wx:if="{{devicecon === 0}}" class="noLinkStartBox">
           <image class="startimage" src="/image/start.png"></image>
         </view>
-        <button wx:if="{{devicecon === 1 && ifConnect ===0}}" class="LinkStartBoxWithNo" bind:tap="sendsecretCommandToStartDrive" data-command="bikelock">
+        <button wx:if="{{devicecon === 1 && ifConnect ===0}}" class="LinkStartBoxWithNo" bind:tap="sendsecretCommand" data-command="bikelock">
           <image class="startimage" src="/image/start1.png"></image>
         </button>
-        <button wx:if="{{devicecon === 1 && ifConnect ===1}}" class="noLinkStartBoxWithYes" bind:tap="sendsecretCommandToStopDrive" data-command="unbikelock">
+        <button wx:if="{{devicecon === 1 && ifConnect ===1}}" class="noLinkStartBoxWithYes" bind:tap="sendsecretCommand" data-command="unbikelock">
           <image class="stopimage" src="/image/close.png"></image>
         </button>
-      </view>
+    </view>
   </view>
 </view>
-<!--test-->
-<button class="textButton" bind:tap="sendCommand" data-command="Clean">Clean</button>
+<view class="GiveBox">
+    <view wx:if="{{ifMyDevice === false && devicecon === 1}}" class="notmyGive">
+      <image class="giveImage" src="/image/give2.png"></image>
+      <text class="giveTitle">无权限</text>
+    </view>
+    <button wx:if="{{ifMyDevice === true && devicecon === 1}}" class="myGive" bind:tap="sendsecretCommand" data-command="SuChange0xB6F850a0175384fF8EE558C3F2205f3beb4Ea06A">
+      <image class="giveImage" src="/image/give.png"></image>
+      <text class="giveTitle1">转让</text>
+    </button>
+    <view wx:if="{{ devicecon === 0}}" class="noLinkRent">
+      <text class="rentTitle2">...</text>
+    </view>
+  </view>
 </view>
 <!--连接弹窗-->
 <view wx:if="{{showingModal === true && ifUserLoad === true}}" class="connectWindow">
@@ -122,13 +147,43 @@
     <text class="connectWindowTitle">周围车辆</text>
     <view class="deviceChooseLine"></view>
     <view class="deviceLists">
-      <button class = "itemStyle" wx:for="{{devices}}" wx:key="deviceID" bindtap = "aroundDeviceBluetoothConnect"data-device="{{item}}">
+      <button class = "itemStyle" wx:for="{{devices}}" wx:key="{{devices.name}}" bindtap = "aroundDeviceBluetoothConnect"data-device="{{item}}">
         <text class = "itemchar">{{item.name}}</text>
-        <text class = "price">{{price}}/小时</text>
       </button>
     </view>
     <view class="deviceChooseLine"></view>
     <button class="connectWindowButton" bindtap="hideModal">关闭</button>
+  </view>
+</view>
+<!--租借弹窗-->
+<view class="RentBox" wx:if="{{showingRentModal === true }}">
+  <view class="ThreeBox">
+    <view class="RentInputContainer">
+      <input type="text" placeholder="输入要租借的用户钱包" bindinput="RentAdressInput" value="{{rentAddressInput}}" />
+    </view>
+    <view class="switchBox">
+      <text>是否允许开座舱锁：</text>
+      <switch checked="{{ifOpenBattery === 'yes'}}" bindchange="RentBatteryChange" />
+    </view>
+    <view class="datePickerBox">
+      <text>选择截至时间：</text>
+      <picker mode="date" value="{{RentDay}}" bindchange="RentChooseDay">
+      <view class="picker">
+        <text>{{RentDay || '日期'}}</text>
+      </view>
+      </picker>
+      <picker mode="time" value="{{RentTime}}" bindchange="RentChooseTime">
+      <view class="picker">
+        <text>{{RentTime || '时间'}}</text>
+      </view>
+      </picker>
+    </view>
+    <view class="switchBox">
+      <text>是否完全信任该用户：</text>
+      <switch checked="{{ifTrustRent === 'yes'}}" bindchange="RentTrustChange" />
+    </view>
+    <button class="SubmitRentButton" bindtap="submitRent">确认提交</button>
+    <button class="ExitRentButton" bindtap="ExitRent">取消</button>
   </view>
 </view>
 <!--主页弹窗-->
@@ -150,10 +205,64 @@
       </button>
     </view>
     <view class="headLine"></view>
-    <view wx:if="{{ifUserLoad === true}}" class="userInformationBox">
+    <!--用户基本界面-->
+    <view wx:if="{{ifUserLoad === true&&ifShowUserInfo===false}}" class="userInformationBox">
       <button class="wallet" bind:tap="walletShow">
         <image class="walletImage" src="/image/wallet.png"></image>
-        <text class="walletTitle">钱包</text>
+        <text  class="walletTitle">钱包</text>
+      </button>
+      <button class="wallet" bind:tap="InFoShow">
+        <image class="userInfoImage" src="/image/userInfo.png"></image>
+        <text wx:if="{{ifUserInfo===false}}" class="userInfoTitle">点击完善</text>
+        <text wx:if="{{ifUserInfo===true}}" class="userInfoTitle">用户信息</text>
+      </button>
+    </view>
+    <!--查看与修改用户手机和微信界面-->
+    <view wx:if="{{ifUserLoad === true&&ifShowUserInfo===true && showChangePAW === false}}" class="userInformationBox">
+      <view class="PhoneBox">
+        <text class="PhoneName">电话号码</text>
+        <view class="PhoneContainer">
+          <image class="PhoneIma" src="/image/phone.png"></image>
+          <text class="InfouseShow" wx:if="{{UsingDevicePhone === ''}}">还未添加哦</text>
+          <text class="InfouseShow" wx:if="{{UsingDevicePhone != ''}}">{{UsingDevicePhone}}</text>
+        </view>
+      </view>
+      <view class="PhoneBox">
+        <text class="PhoneName">微信号码</text>
+        <view class="PhoneContainer">
+          <image class="PhoneIma" src="/image/wechat.png"></image>
+          <text class="InfouseShow" wx:if="{{UsingDeviceChat === ''}}">还未添加哦</text>
+          <text class="InfouseShow" wx:if="{{UsingDeviceChat != ''}}">{{UsingDeviceChat}}</text>
+        </view>
+      </view>
+      <button wx:if="{{UsingDevicePhone === '' || UsingDeviceChat === ''}}" class=" AboutInfoButton" bind:tap="ChangePhoneAndChat">
+        <text class="AboutInfoButtonText">完善</text>
+      </button>
+      <button wx:if="{{UsingDevicePhone != '' && UsingDeviceChat != ''}}" class=" AboutInfoButton" bind:tap="ChangePhoneAndChat">
+        <text class="AboutInfoButtonText">修改</text>
+      </button>
+      <view class="NumberDeclare">
+        <view class="geli">
+          <text class="Declare">提供您的手机号和微信号，当有别的使用者想使用您拥有的设备时，将通过这些来联系您</text>
+        </view>
+      </view>
+    </view>
+    <!--具体修改电话和微信-->
+    <view wx:if="{{ifUserLoad === true&&ifShowUserInfo===true && showChangePAW === true}}" class="userInformationBox">
+      <view class="ChangePhoneBox">
+        <text class="ChangePhonetext">电话号码+86</text>
+        <view class="ChangeInputContainer">
+        <input class="ChangeInputStyle" type="text" placeholder="输入您的电话号码" bindinput="PhoneCHangeInput" value="{{phone}}" />
+        </view> 
+      </view>
+      <view class="ChangePhoneBox">
+        <text class="ChangePhonetext">微信号码</text>
+        <view class="ChangeInputContainer">
+        <input class="ChangeInputStyle" type="text" placeholder="输入您的微信号" bindinput="ChatCHangeInput" value="{{chat}}" />
+        </view> 
+      </view>
+      <button class="PhoneAndChatChangeSubumit" bind:tap="SubmitChangePAW">
+        <text class="SubmitchangeButtontext">提交修改</text>
       </button>
     </view>
     <!--register-->
@@ -189,8 +298,14 @@
         <text class="canRegisterTitle">创建账号</text>
       </button>
     </view>
-    <button class="exitUser" bind:tap="hideUserModal">
+    <button wx:if="{{ifShowUserInfo===false}}" class="exitUser" bind:tap="hideUserModal">
       <text class="exitTitle">关闭</text>
+    </button>
+    <button wx:if="{{ifShowUserInfo===true && showChangePAW ===false}}" class="exitUser" bind:tap="backToWallet">
+        <text class="exitTitle">返回</text>
+    </button>
+    <button wx:if="{{ifShowUserInfo===true && showChangePAW === true}}" class="exitUser" bind:tap="backToPAW">
+        <text class="exitTitle">返回</text>
     </button>
   </view>
 </view>

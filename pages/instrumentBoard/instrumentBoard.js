@@ -15,17 +15,13 @@ Page({
     },
     rotate_Counter: 0,                //用于接收传递过来的轮转数
     lastlyrotate_Counter:0,
-    itinerary:0,
     speed:'00',
-    time:0,
-    timer:null,
-    price:'10coins',
     batteryPowerPercentage:100,
     mileageavailable:'检测中',
     Batterylockstate:-1,
     ifConnect:0,          //启动状态
-    devicecon:0,          //是否连接到车    
-    showingModal:true,  //连接弹窗
+    devicecon:1,          //是否连接到车    iNIT 0
+    showingModal:false,  //连接弹窗     Init true
     showingUserModal:false,        //用户界面弹窗
     ifUserLoad:false,      //用户是否登录
     ifRegisterAction:false,       //是否是注册行为 
@@ -46,60 +42,71 @@ Page({
     connectingName:'检测中',      //最多显示6个字
     UUIDOfSTM:'',//本次链接设备的UUID(STM32的CPU序列号)
     UsingDeviceChat:'',
-    UsingDevicePhone:''
+    UsingDevicePhone:'',
+    RentDeviceChat:'',//租借车的微信号
+    RentDevicePhone:'',
+    UsingcarVersion:'',//存放当前车辆软件版本号
+    Phone:'',//用于临时储存输入的电话号码
+    chat:'',
+    connectingDeviceID:'',
+    jsonDataString: '',   // 用于存储 JSON 数据的字符串
+    isCollecting: true,  //是否需要继续连接字段
+    ifUserInfo:false,    //是否已经储存账户信息
+    ifShowUserInfo:false,//点击跳跃到基本信息栏
+    ifMyDevice:false,    //显示为是否为我的车
+    showingRentModal:false,//是否显示出借相关弹窗
+    rentAddressInput:'',
+    ifOpenBattery:'no',
+    RentDay:'',
+    RentTime:'',
+    ifTrustRent:'no',
+    showChangePAW:false ,//进入具体修改电话和微信的界面
+    ifRentopenBattery:'',//记录如果是租界用户能不能开座舱锁
+    whenRentCanUsedTo:'',//记录租借用户可以使用设备到什么时候
   },
-
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    getApp().initializeBluetooth();
     this.wheatherHaveWallet();
-    this.updateCircle(this.data.batteryPowerPercentage);
+    //this.updateCircle(this.data.batteryPowerPercentage);
   },
-
   //读取内存是否有账号
   wheatherHaveWallet:function(){
     const wallet = wx.getStorageSync('walletAddress');
     if (wallet) {
-      // 如果钱包地址存在
       console.log('钱包地址已存储:', wallet);
-      this.setData({
-        ifUserLoad:true,
-      })
+      this.setData({ifUserLoad:true,})
       this.updateLoadUser();
   } else {
-      // 如果钱包地址不存在,就代表没有注册，直接弹出注册表
       console.log('没有存储钱包地址');
       this.setData({
         showingUserModal:true,
         ifRegisterAction:true
       })
-      // 返回 false，表示没有钱包地址 
   }
-  },
-
-  updateLoadUser:function(){
+  },updateLoadUser:function(){
     const encryptPrivateKey = wx.getStorageSync('encryptedPrivateKeyEncryptedn');  //调取私钥
     const iv = wx.getStorageSync('encryptedPrivateKeyIv');   //调取iv
     const passWord = wx.getStorageSync('passWord');
     const privateKey = this.decryptPrivateKey(encryptPrivateKey,iv,passWord);
     const wallet = new ethers.Wallet(privateKey);
+    const StorePhone = wx.getStorageSync('UsingDeviceChat');
+    const StoreChat = wx.getStorageSync('UsingDevicePhone');
     this.setData({              //上号更新私钥和完整钱包
       privateKey:privateKey,
       wallet:wallet,
+      UsingDeviceChat:StorePhone,
+      UsingDevicePhone:StoreChat, 
     })   
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
   onReady() {
     this.loadDevices();
+    if(this.data.UsingDevicePhone!='' && this.data.UsingDeviceChat!=''){this.setData({ifUserInfo:true})}
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
+ 
   onShow() {
     this.checkConnectionStatusInterval = setInterval(() => {
       const currentApp = getApp();
@@ -109,16 +116,30 @@ Page({
       }
     }, 500);
   },
-
   //自动连接最后一次使用的设备（如果在范围内）
   automaticLink:function(){
     const lastlyConnectBLE = wx.getStorageSync('lastlyConnectBLE');
     if(lastlyConnectBLE != '' && this.data.ifUserLoad === true){
-        this.DoforDevice(lastlyConnectBLE)
+        this.FindConnectingAndReConnect(lastlyConnectBLE)
         this.setData({
           showingModal:false
         })
     }
+  },FindConnectingAndReConnect:function(data){
+    wx.getConnectedBluetoothDevices({
+      services: [],
+      success:(res)=>{
+        if(res.devices.length>0){
+          wx.closeBLEConnection({
+            deviceId: res.devices.deviceID,
+            success:(res)=>{
+              console.log('已关闭残留设备:',res.devices.deviceID)
+              this.DoforDevice(data,null);
+            }
+          })
+        }else{this.DoforDevice(data,null);}
+      }
+    })
   },
   /**
    * 生命周期函数--监听页面隐藏
@@ -126,30 +147,27 @@ Page({
   onHide() {
     
   },
-
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload() {
-    
+    console.log(this.data.connectingDeviceID)
+      wx.closeBLEConnection({
+        deviceId: this.data.connectingDeviceID,
+      })
   },
-
-  
-
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
 
   },
-
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom() {
 
   },
-
   /**
    * 用户点击右上角分享
    */
@@ -159,22 +177,45 @@ Page({
 //-----------------------寻找设备的连接函数-------------------------
 //总函数
 aroundDeviceBluetoothConnect:function(event){
-    const device = event.currentTarget.dataset.device;
-    const deviceID = device.deviceID;
-    const { name } = device;
-    this.DoforDevice(deviceID,name);
-    this.hideModal();
+  wx.getConnectedBluetoothDevices({ //get connecting device
+    services: [],
+    success:(res)=>{
+      console.log('已检测');
+      if(res.devices.length>0){ //means device noy 
+        console.log('有残留设备');
+        console.log(res);
+        wx.closeBLEConnection({
+          deviceId: res.devices.deviceID,
+          success:()=>{
+            console.log('已断开残留的BLE')
+            const device = event.currentTarget.dataset.device;
+            const deviceID = device.deviceID;
+            const { name } = device;
+            this.DoforDevice(deviceID,name);
+            this.hideModal();
+          },fail:()=>{console.log('不能关闭')}
+        })
+      }else{
+        console.log(res);
+        console.log('无残留设备');
+        const device = event.currentTarget.dataset.device;
+        const deviceID = device.deviceID;
+        const { name } = device;
+        this.DoforDevice(deviceID,name);
+        this.hideModal();
+      }
+    },fail:(err)=>{
+      console.log("获取失败",err)
+    }
+  })
 },
-
-changeDevice:function(){
-  this.showModal();
-},
-
+changeDevice:function(){this.showModal()},
 //------------------用于连接与获取必须的信息-------------------------
 DoforDevice:function(deviceID,name){
   //1.连接蓝牙
   wx.createBLEConnection({
     deviceId: deviceID,
+    connectionPriority:'high',
     fail:()=>{
       wx.showToast({
         title: '连接失败了',
@@ -183,28 +224,32 @@ DoforDevice:function(deviceID,name){
       })
     },
     success:()=>{
+      console.log("成功连接")
       this.getServices(deviceID);           //2.获取服务
       this.setData({
         lastlyConnectBLE:deviceID,
-        connectingName:name
+        connectingName:name,
+        connectingDeviceID:deviceID,
       })
-      console.log(this.data.connectingName)
+      console.log(this.data.connectingDeviceID)
     },
   })
 },
-
 getServices:function(deviceID){
   wx.getBLEDeviceServices({
     deviceId: deviceID,
     success:(res)=>{
       if (res.services.length > 0) {
-        const serviceId = res.services[0].uuid;        
-        this.getCharacteristics(deviceID, serviceId);                 //3.获取特征ID
+        const targetService = res.services.find(service => service.uuid.startsWith('0000FFE0')); //过滤标准服务ID
+        if(targetService){
+          const serviceID = targetService.uuid;
+          this.getCharacteristics(deviceID, serviceID);  // 获取特征ID
+          console.log('成功得到服务：',serviceID);
+        }else{console.log('没有满足的服务')}
       }
-    },
+    },fail:(err)=>{console.log('没能得到服务:',err)}
   })
 },
-
 getCharacteristics: function(deviceId, serviceId){
   wx.getBLEDeviceCharacteristics({
     deviceId: deviceId,
@@ -217,15 +262,15 @@ getCharacteristics: function(deviceId, serviceId){
           characteristicIds.push(characteristics.uuid); // 收集特征的UUID
         });
         this.updateDeviceInformation(deviceId, serviceId, characteristicIds); // 只调用一次
+        //console.log('特征1：',characteristicIds[0]);
+        //console.log('特征2：',characteristicIds[1]);
       } 
     },
   })
 },
-
 updateDeviceInformation: function(deviceId, serviceId, characteristicIds) {
   const char1 = characteristicIds.length > 0 ? characteristicIds[0] : null;
   const char2 = characteristicIds.length > 1 ? characteristicIds[1] : null;
-
   this.setData({
     deviceId: deviceId,
     serviceId: serviceId,
@@ -238,8 +283,7 @@ updateDeviceInformation: function(deviceId, serviceId, characteristicIds) {
   });
 },
 //------------------用于蓝牙设备功能的启用------------------
-//收取信息
-listentoBlue:function(){
+listentoBlue:function(){//收取信息
   wx.notifyBLECharacteristicValueChange({
     deviceId: this.data.deviceId,
     serviceId: this.data.serviceId,
@@ -250,105 +294,121 @@ listentoBlue:function(){
         devicecon:1,
       })
     },
-  });
-    wx.onBLECharacteristicValueChange((characteristic) => {
+  }); wx.onBLECharacteristicValueChange((characteristic) => {
       const data = this.bufferToString(characteristic.value); 
-      console.log(data);
-      this.judgelisten(data);
-      });
-  },
-  judgelisten:function(data){
-    try{
-      const parsedData = JSON.parse(data);
-      console.log(parsedData);
-      if(parsedData.Name && parsedData.WalletAddress){
-        this.handleUserInfo(parsedData);
-      }else if(parsedData.BatteryState){
-        this.handleDeviceStatus(parsedData);
-      }
-    }catch{
-      console.log("errorJSON")
-      this.DoToOtherCommand(data);
+      this.DealNowRecieved(data);
+      });},
+  DealNowRecieved:function(data){
+    this.setData({
+      jsonDataString:this.data.jsonDataString+data,      //每次收到都累计进去
+    });if((this.data.jsonDataString).includes('<BN') && (this.data.jsonDataString).includes('OR>')){
+      console.log('接收完整');
+      this.CutCompleteData();
     }
-  },
-  handleUserInfo:function(data){
+  },CutCompleteData:function(){
+    const match = this.data.jsonDataString.match(/<BN([\s\S]*?)OR>/);
+    if (match && match[1]) {
+      const wrappedData = match[1];  // 提取 <BG ... OR> 中的数据部分
+      //console.log("提取到的完整数据:", wrappedData);
+      const [part1, part2] = wrappedData.split('+++');
+      //console.log("分割后的部分1:", part1); //base like votalge
+      //console.log("分割后的部分2:", part2); //flash
+      this.HandleCarve(part1,part2);
+      this.setData({
+        jsonDataString: ''
+      });
+    }
+  },HandleCarve:function(part1,part2){
+    const parsedData1=JSON.parse(part1);const parsedData2=JSON.parse(part2);
+    console.log(parsedData1);console.log(parsedData2);
+    if(parsedData2.Name && parsedData2.WalletAddress){
+      this.handleUserInfo(parsedData2);
+    }if(parsedData1.BatteryState){
+      this.handleDeviceStatus(parsedData1);
+    }
+  },handleUserInfo:function(data){
     const name = data.Name;
-    //const walletAddress = data.WalletAddress;
-    //const timestamp = data.TimeStamp;
     const userWechat = data.UserWechat;
     const userPhone = data.UserPhone;
-    console.log(`用户姓名: ${name}`);
-    console.log(`微信号: ${userWechat}`);
-    console.log(`手机号: ${userPhone}`);
-    this.setData({
-      connectingName:name,
-      UsingDeviceChat:userWechat,
-      UsingDevicePhone:userPhone
-    })
-  },
-  handleDeviceStatus:function(data){
+    const BikeAddress = data.WalletAddress;
+    this.setData({connectingName:name})
+    if(BikeAddress === this.data.wallet.address){ //说明是自己的车
+      this.setData({ifMyDevice:true})             //标记
+      if((userWechat != this.data.UsingDeviceChat || userPhone != this.data.UsingDevicePhone)&&(this.data.UsingDeviceChat.length>0||this.data.UsingDevicePhone.length>0)){
+        console.log(userWechat);console.log(this.data.UsingDeviceChat);
+        console.log(userPhone);console.log(this.data.UsingDevicePhone);
+        this.sendMyPhoneAndChat();                //update the phone and chat
+      }
+    }else{this.setData({ifMyDevice:false})
+    if((userWechat!=''|| userPhone!='')&&this.data.ifMyDevice === false){
+      this.setData({RentDevicePhone:userPhone,RentDeviceChat:userWechat})
+    }
+  }
+  },handleDeviceStatus:function(data){
     const batteryVoltage = data.BatteryVoltage;
     const batteryState = data.BatteryState;
     const rotate = data.Rotate;
     const uuid = data.UUID;
-    console.log(`电池电压: ${batteryVoltage}`);
-    console.log(`电池状态: ${batteryState}`);
-    console.log(`旋转状态: ${rotate}`);
-    console.log(`设备 UUID: ${uuid}`);
+    const ERR = data.ERR;
+    const Version = data.V;
+    const RunningStatus = data.BS;
+    if(this.data.ifMyDevice===false){
+      console.log('rent')
+      const CanrentOpenBattery = data.RB;
+      const RemainTime = data.TLim;
+      this.setData({ifRentopenBattery:CanrentOpenBattery})
+      this.calculateWhen(RemainTime);
+    }
     this.DoToBatteryVoltage(batteryVoltage);
     this.DoToBatteryState(batteryState);
     this.DoToRatate(rotate);
-    this.setData({
-      UUIDOfSTM:uuid
-    })
-  },
-  DoToOtherCommand:function(data){
-    if(data.includes('ready')){
-      this.startTimer();                        //如果回应已经开始供电，则开始计时
-    }else if(data.includes('battery3')){         
-      wx.showToast({
-        title: '开锁失败了哦，找找有什么问题吧',
-        icon: 'none',
-        duration: 1000,
-      });
-    }else if(data.includes('battery4')){         
-      wx.showToast({
-        title: '关锁失败了哦，再试一次',
-        icon: 'none',
-        duration: 1000,
-      });
-    }
-  },
-  DoToBatteryVoltage:function(data){
+    this.setData({UUIDOfSTM:uuid,UsingcarVersion:Version});
+    this.ShowRunnigError(ERR);
+    this.DealRunningStatus(RunningStatus);
+  },DoToBatteryVoltage:function(data){
     this.doTobatteryPower(data);
-  },
-  DoToBatteryState:function(data){
+  },DoToBatteryState:function(data){
     if(data === 'battery1'){
       this.setData({Batterylockstate:1})
     }else if(data === 'battery2'){
       this.setData({Batterylockstate:0})
+    }else if(data === 'battery3'){
+      wx.showToast({title: '开锁失败了',icon:'error',duration:1000})
+    }else if(data === 'battery4'){
+      wx.showToast({title: '关锁失败了',icon:'error',duration:1000})
     }
-  },
-  DoToRatate:function(data){
-    this.setData({
-      lastlyrotate_Counter:this.data.rotate_Counter,   //保留上一次的值
-    });
+  },DoToRatate:function(data){
+    this.setData({lastlyrotate_Counter:this.data.rotate_Counter,}); //保留上一次的值
     const mileageMatch = data.match(/R:\s*(\d+)/);
     if (mileageMatch) {
       const mileage = parseInt(mileageMatch[1], 10);
-      this.setData({
-        rotate_Counter: mileage
-      });
+      this.setData({rotate_Counter: mileage});
     }
+  },ShowRunnigError:function(ERR){
+    if(ERR === 'UserErr'){wx.showToast({title: '您没有使用此设备的权限',icon:'error',duration:1000})}
+    else if(ERR === 'IDErr'){wx.showToast({title: '出现了连接错误，请稍后再试',icon:'loading',duration:1000})}
+    else if(ERR === 'SignErr'){wx.showToast({title: '您的命令不是合法的',icon:'error',duration:1000})}
+    else if(ERR === 'TimeErr'){wx.showToast({title: '您的命令已经过期',icon:'error',duration:1000})}
+  },DealRunningStatus:function(data){
+    if(data === 1){this.setData({ifConnect:1})}           //切换到已经开启状态
+    else if(data === 0){this.setData({ifConnect:0})}
+  },calculateWhen:function(data){
+    console.log('timecalculate')
+    const timestampInSeconds = parseInt(data);const currentTimestamp = Math.floor(Date.now() / 1000);
+    const timeDifference = Math.abs(currentTimestamp - timestampInSeconds);
+    const hours = Math.floor(timeDifference / 3600);const minutes = Math.floor((timeDifference % 3600) / 60);
+    const TimeGet = hours +':'+ minutes;
+    console.log('TimeGet')
+    this.setData({whenRentCanUsedTo:TimeGet})
   },
 //发信息
-sendCommand: function(event) {  
-  const command = event.currentTarget.dataset.command + '\n'; 
+sendCommand1: function(data) {  
+  const command = data + '\n'; 
   console.log(command);
   this.sendData(command);
 },
 
-sendsecretCommandToOpenBatteryLock:function(event){
+sendsecretCommand:function(event){
   const command = event.currentTarget.dataset.command;
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
@@ -363,13 +423,13 @@ sendsecretCommandToOpenBatteryLock:function(event){
     signature:signature,
     address:this.data.wallet.address
 };
-  const jsonString = JSON.stringify(obj) + '\n';
+const jsonString = '<' + JSON.stringify(obj) + '>';
   console.log(jsonString);
-  this.sendData(jsonString);
+  this.sendByTwenty(jsonString);
+  wx.showToast({title: '已发送，请等待响应',icon:'success',duration:1000})
 },
-
-sendsecretCommandToStartDrive:function(event){
-  const command = event.currentTarget.dataset.command;
+sendsecretUnfixedCommand:function(data){
+  const command = data;
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
     command:command,
@@ -383,18 +443,19 @@ sendsecretCommandToStartDrive:function(event){
     signature:signature,
     address:this.data.wallet.address
 };
-const jsonString = JSON.stringify(obj) + '\n';
-console.log(jsonString);
-this.sendData(jsonString);
-  this.setData({
-    ifConnect:1
-  })
+  const jsonString = '<' + JSON.stringify(obj) + '>';
+  console.log(jsonString);
+  this.sendByTwenty(jsonString);
 },
-sendsecretCommandToStopDrive:function(event){
-  const command = event.currentTarget.dataset.command;
+sendMyPhoneAndChat:function(){
+  const command = {
+    Phone:this.data.UsingDevicePhone,
+    Wechat:this.data.UsingDeviceChat,
+  }
+  var commandstr= JSON.stringify(command);
   const cmd={
     TimeStamp:Math.floor(Date.now() / 1000),
-    command:command,
+    command:'addPAC'+commandstr,
     UUID:this.data.UUIDOfSTM
   }
   var cmdstr=JSON.stringify(cmd)
@@ -404,28 +465,35 @@ sendsecretCommandToStopDrive:function(event){
     PubKey: this.data.wallet.signingKey.publicKey,
     signature:signature,
     address:this.data.wallet.address
-};
-const jsonString = JSON.stringify(obj) + '\n';
-console.log(jsonString);
-this.sendData(jsonString);
-  this.stoptimer();
-  this.setData({
-    ifConnect:0
-  })
+};const jsonString = '<' + JSON.stringify(obj) + '>';
+  console.log(jsonString);
+  this.sendByTwenty(jsonString);
+},
+sendByTwenty:function(JsonString){
+  /*{"cmd":"{\"TimeStamp*/let startIndex = 0; 
+  /*12345678901234567890*/const everySize = 20;
+  const needTime = Math.ceil(JsonString.length / everySize);
+  for(let i=0;i<needTime;i++){
+    const endIndex = Math.min(startIndex + everySize, JsonString.length);
+    const batch = JsonString.slice(startIndex, endIndex);
+    this.sendData(batch);
+    startIndex = endIndex;
+  }
 },
 sendData: function(command) {
+  console.log(this.data.characteristicId1);
   wx.writeBLECharacteristicValue({
     characteristicId: this.data.characteristicId1,
     deviceId: this.data.deviceId,
     serviceId: this.data.serviceId,
-    value: this.stringToBuffer(command),
-    fail: () => {
+    value: this.stringToBuffer(command), 
+    fail: (err) => {
       wx.showToast({
         title: '发送失败',
         icon: 'none',
         duration: 1000,
-      });
-    }
+      });console.log('sendERROR:',err)
+    },
   });
 },
 stringToBuffer: function(str) {
@@ -448,45 +516,30 @@ startSignalStrengthUpdate: function() {
     }, 2000) // 每秒更新一次
   });
 },
-
 stopSignalStrengthUpdate: function() {
   clearInterval(this.data.signalUpdateInterval);
-  this.setData({
-    signalUpdateInterval: null
-  });
+  this.setData({signalUpdateInterval: null});
 },
-
 getDeviceRSSI: function() {
   wx.getBLEDeviceRSSI({
     deviceId: this.data.deviceId,
     success: (res) => {
-      this.setData({
-        'device.signalStrength': res.RSSI // 更新信号强度
+      this.setData({'device.signalStrength': res.RSSI // 更新信号强度
       });
     },
   });
 },
-
-
 //------------------used to convert-----------------
   doTobatteryPower:function(data){
     if (data){
       const powerNum = parseFloat(data);
       if(powerNum ){
         let percentage;
-        if(powerNum <= 53.4 && powerNum >= 45){
-          percentage = Math.floor(100 * (powerNum - 45) / (53.4 - 45));
-        }
-        else if(powerNum > 53.4){
-          percentage = 100
-        }
-        else{
-          percentage = 0
-        }
-        this.animateCircle(percentage);
-        this.setData({
-          batteryPowerPercentage:percentage
-        });
+        if(powerNum <= 53.4 && powerNum >= 45){percentage = Math.floor(100 * (powerNum - 45) / (53.4 - 45));}
+        else if(powerNum > 53.4){percentage = 100}
+        else{ percentage = 0}
+        //this.animateCircle(percentage);
+        this.setData({batteryPowerPercentage:percentage});
       }
     }
   },
@@ -497,7 +550,6 @@ getDeviceRSSI: function() {
       itinerary:parseFloat(calculatedValue.toFixed(1))
     });
   },
-
   speedCalculate:function(data1,data2){
     const calculatedValue = ((data1-data2)*3.14*0.4)/0.3/3.6;
     const speed = Math.ceil(calculatedValue); // 向上取整
@@ -508,7 +560,6 @@ getDeviceRSSI: function() {
       speed:combinedSpeed
      });
   },
-
   updateSpeed:function(){                    //每0.3s更新一次速度
     this.speedUpdateInterval = setInterval(() => {
       const data1 = this.data.rotate_Counter;
@@ -516,11 +567,9 @@ getDeviceRSSI: function() {
       this.speedCalculate(data1,data2);
     },300);
   },
-
   stopSpeedUpdate: function() {
     clearInterval(this.speedUpdateInterval); // 停止定时更新
   },
-
   updateItinerary:function(){
     this.itineraryUpdateInterval = setInterval(() => {
       const data = this.data.rotate_Counter;
@@ -528,80 +577,52 @@ getDeviceRSSI: function() {
       this.itineraryCalculate(data);
     },5000);
   },
-
   stopItineraryUpdate: function() {
     clearInterval(this.itineraryUpdateInterval); // 停止定时更新
   },
-  
-  //------------------------计时------------------------------
-  startTimer:function(){
-    this.setData({
-      timer:setInterval(() => {
-        this.setData({
-          time:this.data.time + 1
-        })
-      },60000)                  
-    });
-  },
-
-  stoptimer:function(){
-    clearInterval(this.data.timer);
-    this.setData({
-      timer:null
-    });
-  },
-
   //--------------------连接弹窗------------------
   showModal() {
     this.setData({
       showingModal: true
     });
   },
-
   hideModal:function() {
     this.setData({
       showingModal:false
     })
-    this.updateCircle(this.data.batteryPowerPercentage);
+    //this.updateCircle(this.data.batteryPowerPercentage);
   },
-
   showUserModal:function(){
     this.setData({
       showingUserModal:true
     })
   },
-
   hideUserModal:function(){
     this.setData({
       showingUserModal:false
     })
-    this.updateCircle(this.data.batteryPowerPercentage);
+    //this.updateCircle(this.data.batteryPowerPercentage);
   },
-
   showRegisterModal:function(){
     this.setData({
       ifRegisterAction:true
     })
   },
-
   hideRegisterModal:function(){
     this.setData({
       ifRegisterAction:false
     })
   },
-
   showLoadrModal:function(){
     this.setData({
       ifLoadAction:true
     })
   },
-
   hideLoadrModal:function(){
     this.setData({
       ifLoadAction:false
     })
   },
-
   exitRegisterOrLoad:function(){
     this.setData({
       ifRegisterAction:false
@@ -618,19 +639,14 @@ getDeviceRSSI: function() {
   userLoad:function(){
 
   },
-
   //---------------创建账号--------------------
-
   userRegister:function(){
     this.showRegisterModal()
-  },
-
-  onInputRegister:function(event){
+  },onInputRegister:function(event){
     const helpDO = event.detail.value;
     this.setData({
       mnemonic:helpDO
-    })
-    if (helpDO.length >= 10){
+    });if (helpDO.length >= 10){
       this.setData({
         iconSrc1:'/image/right.png',
         mnemonicOK:true
@@ -646,14 +662,11 @@ getDeviceRSSI: function() {
         mnemonicOK:false
       })
     }
-  },
-
-  onInputRegister1:function(event){
+  },onInputRegister1:function(event){
     const helpDO = event.detail.value;
     this.setData({
       mnemonicAgain:helpDO
-    })
-    if (helpDO === this.data.mnemonic){
+    });if (helpDO === this.data.mnemonic){
       this.setData({
         iconSrc3:'/image/right.png',
         mnemonicAgainOK:true
@@ -669,16 +682,11 @@ getDeviceRSSI: function() {
         mnemonicAgainOK:false
       })
     }
-  },
-
-  onInputPassword:function(event){
+  },onInputPassword:function(event){
     const helpDo = event.detail.value;
-
     this.setData({
       password:helpDo
-    })
-
-    if (helpDo.length === 6 && /^\d{6}$/.test(helpDo)){
+    });if (helpDo.length === 6 && /^\d{6}$/.test(helpDo)){
       this.setData({
         iconSrc2:'/image/right.png',
         passwordOK:true
@@ -694,14 +702,24 @@ getDeviceRSSI: function() {
         passwordOK:false
       })
     }
-  },
-
-  walletShow:function(){
+  }, walletShow:function(){
     wx.showModal({
       title: '钱包地址',
-      showCancel: false,
       content: `${this.data.wallet.address}`,
-  });
+      confirmText: '复制地址',
+      cancelText:'退出',
+      success:(res)=>{
+        if(res.confirm){
+          wx.setClipboardData({
+            data: this.data.wallet.address,success:()=>{wx.showToast({
+              title: '已复制',duration:1000})}
+          })
+        }
+      }
+  })},InFoShow:function(){
+    this.setData({
+      ifShowUserInfo:true
+    })
   },
   //------------web部分-----------------
   onRegister:function(){//用户点击注册
@@ -751,8 +769,7 @@ getDeviceRSSI: function() {
     for (let i = 0; i < 16; i++) {
         const byte = Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
         iv += byte;
-    }
-    return CryptoJS.enc.Hex.parse(iv);
+    }return CryptoJS.enc.Hex.parse(iv);
 },
 //加密函数
   encryptPrivateKey: function(privateKey, passWord) {
@@ -775,16 +792,14 @@ getDeviceRSSI: function() {
     const hash = ethers.sha256(ethers.toUtf8Bytes(password));
     const key16 = CryptoJS.enc.Hex.parse(hash.slice(2, 34));
     const ivword = CryptoJS.enc.Base64.parse(iv);
-
     const decrypted = CryptoJS.AES.decrypt(encryptedPrivateKey, key16, {
         iv: ivword,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7
     });
-
     return decrypted.toString(CryptoJS.enc.Utf8);            //返回解密后的私钥
 },
-
+/*
 //电池圈的组件
 changeBatteryLevel: function() {
   const newLevel = Math.floor(Math.random() * 101); // 随机生成 0-100 的电量
@@ -845,5 +860,98 @@ updateCircle: function(angle) {
     ctx.stroke();
     ctx.draw();
   }).exec();
-}
+},*/
+//--------------租借界面----------------
+showRentModal:function(){       //展示出借页面
+  this.setData({
+    showingRentModal:true
+  })
+},RentAdressInput:function(e){
+  this.setData({
+    rentAddressInput: e.detail.value
+  })
+},RentBatteryChange:function(e){
+  const isChecked = e.detail.value;
+  this.setData({
+    ifOpenBattery: isChecked ? 'yes' : 'no'
+  });
+},RentChooseDay(e) {
+  this.setData({
+    RentDay: e.detail.value
+  });
+},RentChooseTime(e) {
+  this.setData({
+    RentTime: e.detail.value
+  });
+},RentTrustChange(e) {
+  const isChecked = e.detail.value; 
+  this.setData({
+    ifTrustRent: isChecked ? 'yes' : 'no'
+  });
+},submitRent:function(){
+  if(this.data.rentAddressInput.length == 42){
+    let Time;
+    if(this.data.RentTime.length == 0){Time = '23:59'}else{Time = this.data.RentTime}
+    const realTime = this.data.RentDay +'T'+ Time;
+    let data = new Date(realTime);let time = data.getTime();let RentTimeStamp = Math.floor(time/1000);console.log(realTime);console.log("时间戳（秒）:", RentTimeStamp);
+    if(RentTimeStamp>Math.floor(Date.now() / 1000)){
+      let battery;let Trust;
+      if(this.data.ifOpenBattery === 'yes'){
+        battery = '1';
+      }else{battery = '0'}
+      if(this.data.ifTrustRent === 'yes'){
+        Trust = '$';
+      }else{Trust = ''}  
+      const content = `您将授权 ${this.data.rentAddressInput} 骑行 ${this.data.connectingName} 至 ${this.data.RentDay} ${Time}`;
+      wx.showModal({
+        title: '提醒',
+        content: content,
+        complete: (res) => {if (res.confirm) {
+            const Command = 'RentAdd'+this.data.rentAddressInput+battery+RentTimeStamp+Trust;
+            console.log(Command)
+            this.sendsecretUnfixedCommand(Command);
+            this.setData({rentAddressInput:'',ifOpenBattery:'no',RentDay:'',RentTime:'',ifTrustRent:'no',showingRentModal:false})}}
+      })}else{
+      wx.showToast({ title: '时间不正确',icon:'error', duration:1000})
+    } }else{wx.showToast({title: '不是标准的钱包地址',icon:'error',duration:1000})
+  }
+},ExitRent:function(){
+  this.setData({rentAddressInput:'',ifOpenBattery:'no',RentDay:'',RentTime:'',ifTrustRent:'no',showingRentModal:false})
+},
+//电话和微信号
+backToWallet:function(){
+  this.setData({ifShowUserInfo:false})
+},backToPAW:function(){
+  this.setData({showChangePAW:false,Phone:'',chat:''})
+},ChangePhoneAndChat:function(){
+  this.setData({showChangePAW:true})
+},PhoneCHangeInput:function(e){
+  this.setData({Phone:e.detail.value})
+},ChatCHangeInput:function(e){
+  this.setData({chat:e.detail.value})
+},SubmitChangePAW:function(){
+  if(this.data.Phone.length === 11){
+    const content = `电话:${this.data.Phone} 微信:${this.data.chat}`
+    wx.showModal({
+      title: '请确认',
+      content: content,
+      confirmText:'确认无误',
+      complete: (res) => {
+        if (res.confirm) {
+          this.setData({UsingDevicePhone:this.data.Phone,UsingDeviceChat:this.data.chat})
+          wx.showToast({title: '修改成功',icon:'success',duration:1000})
+          console.log(this.data.UsingDevicePhone);console.log(this.data.UsingDeviceChat)
+          wx.setStorageSync('UsingDevicePhone', this.data.UsingDevicePhone);
+          wx.setStorageSync('UsingDeviceChat', this.data.UsingDeviceChat)
+        }
+      }
+    })
+  }else{wx.showToast({title: '错误的电话格式',icon:'error',duration:1000 })}
+},
+
+test:function(){
+  wx.openUrl({
+    url: 'https://u.wechat.com/EDNEMHbDgmBm4HSYzifeImA?s=1'
+  });  
+},
 })
