@@ -354,7 +354,6 @@ listentoBlue:function(){//收取信息
     const Version = data.V;
     const RunningStatus = data.BS;
     if(this.data.ifMyDevice===false){
-      console.log('rent')
       const CanrentOpenBattery = data.RB;
       const RemainTime = data.TLim;
       this.setData({ifRentopenBattery:CanrentOpenBattery})
@@ -370,9 +369,15 @@ listentoBlue:function(){//收取信息
     this.doTobatteryPower(data);
   },DoToBatteryState:function(data){
     if(data === 'battery1'){
-      this.setData({Batterylockstate:1})
+      if(this.data.Batterylockstate != 1){
+        wx.showToast({ title: '开锁成功',icon:'success',duration:1000})
+        this.setData({Batterylockstate:1})
+      }
     }else if(data === 'battery2'){
-      this.setData({Batterylockstate:0})
+      if(this.data.Batterylockstate != 0){
+        wx.showToast({ title: '关锁成功',icon:'success',duration:1000})
+        this.setData({Batterylockstate:0})
+      }
     }else if(data === 'battery3'){
       wx.showToast({title: '开锁失败了',icon:'error',duration:1000})
     }else if(data === 'battery4'){
@@ -387,16 +392,31 @@ listentoBlue:function(){//收取信息
     }
   },ShowRunnigError:function(ERR){
     if(ERR === 'UserErr'){wx.showToast({title: '您没有使用此设备的权限',icon:'error',duration:1000})}
-    else if(ERR === 'IDErr'){wx.showToast({title: '出现了连接错误，请稍后再试',icon:'loading',duration:1000})}
-    else if(ERR === 'SignErr'){wx.showToast({title: '您的命令不是合法的',icon:'error',duration:1000})}
-    else if(ERR === 'TimeErr'){wx.showToast({title: '您的命令已经过期',icon:'error',duration:1000})}
+    else if(ERR === 'CommandErr'){wx.showToast({title: '出现了问题哦',icon:'error',duration:1000})}
+    else if(ERR === 'FormatErr'){wx.showToast({title: '出现了问题哦',icon:'error',duration:1000})}
     else if(ERR === 'RegisterErr'){wx.showToast({title: '注册失败，请重试',icon:'error',duration:1000})}
+    else if(ERR === 'AddRrentErr'){wx.showToast({title: '添加租借失败，请重试',icon:'error',duration:1000})}
+    else if(ERR === 'getRent'){wx.showToast({title: '添加租借成功',icon:'success',duration:1000})}
+    else if(ERR === 'UpdateOld'){wx.showToast({title: '已更新租界用户信息',icon:'success',duration:1000})}
     else if(ERR === 'ChangeSuperOK'){wx.showToast({title: '转让成功',icon:'success',duration:1000})}
-    else if(ERR === 'addPACOK'){wx.showToast({title: '添加信息成功',icon:'success',duration:1000})}
-    else if(ERR === 'update'){wx.showToast({title: '添加租借成功',icon:'success',duration:1000})}
+    else if(ERR === 'ChangeSuperErr'){wx.showToast({title: '转让失败，请重试',icon:'error',duration:1000})}
+    else if(ERR === 'addPACOK'){wx.showToast({title: '添加用户信息成功',icon:'error',duration:1000})}
+    else if(ERR === 'TimeErr'){wx.showToast({title: '命令超时',icon:'error',duration:1000})}
+    else if(ERR === 'SignCmdErr'){wx.showToast({title: '命令有误',icon:'error',duration:1000})}
+    else if(ERR === 'SignAddErr'){wx.showToast({title: '地址错误',icon:'error',duration:1000})}
+    else if(ERR === 'IDErr'){wx.showToast({title: '出现了问题哦，请重试',icon:'error',duration:1000})}
+    else if(ERR === 'UserErr'){wx.showToast({title: '您没有使用此设备的权限',icon:'error',duration:1000})}
   },DealRunningStatus:function(data){
-    if(data === 1){this.setData({ifConnect:1})}           //切换到已经开启状态
-    else if(data === 0){this.setData({ifConnect:0})}
+    if(data === 1){
+      if(this.data.ifConnect != 1){
+        wx.showToast({ title: '已启动',icon:'success',duration:1000})
+        this.setData({ifConnect:1})}
+      }           
+    else if(data === 0){
+      if(this.data.ifConnect != 0){
+        wx.showToast({ title: '已关闭',icon:'success',duration:1000})
+        this.setData({ifConnect:0})}
+      }
   },calculateWhen:function(data){
     console.log('timecalculate')
     const timestampInSeconds = parseInt(data);const currentTimestamp = Math.floor(Date.now() / 1000);
