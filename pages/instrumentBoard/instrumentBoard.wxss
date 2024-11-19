@@ -933,4 +933,67 @@
   font-weight: 550;
   color: white;
 }
+/*转让弹窗*/
+.TransformDeviceView{
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  z-index: 1000; /* 确保弹窗在上方 */
+}.transformBox{
+  width: 80%;
+  height: 30%;
+  background-color: white;
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}.transformInputContainer{
+  margin: 20px; /* 外边距 */
+  padding: 10px; /* 内边距 */
+  height: 15%;
+  background-color: #f8f8f8; /* 背景色 */
+  border-radius: 10px; /* 圆角 */
+  margin-top: 7%;
+  display: flex;
+  align-items: center;
+}.TransformDevicebutton{
+  background-color: #9ACD32;
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx;
+  margin-top: 5%;
+}
+.TransformDeviceTitle{
+  color: white;
+}.exitTransform{
+  background-color: #9ACD32;
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20rpx;
+  margin-top: 5%;
+}
+/*转让弹窗*/
+.QRBox{
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  z-index: 1000; /* 确保弹窗在上方 */
+}
+.QRShow{}
 /*微信号和电话号e*/

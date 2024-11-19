@@ -33,7 +33,7 @@
   </view>
   <view class="secondBox">
     <view class="leftSecondBox">
-      <button wx:if="{{devicecon === 1}}"  class="changeDeviceBox1" bindtap = "test"><!--showModal-->
+      <button wx:if="{{devicecon === 1}}"  class="changeDeviceBox1" bindtap = "showModal"><!--showModal-->
         <image class="changeimage" src="/image/change.png"></image>
       </button>
       <view wx:if="{{devicecon === 0}}"  class="changeDeviceBox">
@@ -132,7 +132,7 @@
       <image class="giveImage" src="/image/give2.png"></image>
       <text class="giveTitle">无权限</text>
     </view>
-    <button wx:if="{{ifMyDevice === true && devicecon === 1}}" class="myGive" bind:tap="sendsecretCommand" data-command="SuChange0xB6F850a0175384fF8EE558C3F2205f3beb4Ea06A">
+    <button wx:if="{{ifMyDevice === true && devicecon === 1}}" class="myGive" bind:tap="showTransferDevice">
       <image class="giveImage" src="/image/give.png"></image>
       <text class="giveTitle1">转让</text>
     </button>
@@ -184,6 +184,23 @@
     </view>
     <button class="SubmitRentButton" bindtap="submitRent">确认提交</button>
     <button class="ExitRentButton" bindtap="ExitRent">取消</button>
+  </view>
+</view>
+<view class="QRBox" wx:if="{{showNeedRentModal === true}}">
+    <canvas class="QRShow" style="width: 200px; height: 200px;" canvas-id="myQrcode"></canvas>
+</view>
+<!--转让弹窗-->
+<view class="TransformDeviceView" wx:if="{{showTransferDevice === true}}">
+  <view class="transformBox">
+    <view class="transformInputContainer">
+      <input type="text" placeholder="输入接收人地址" bindinput="transformInput" value="{{transformInput}}" />
+    </view>
+    <button class="TransformDevicebutton" bind:tap="TransformDevicebutton">
+      <text class="TransformDeviceTitle">确认转让</text>
+    </button>
+    <button class="exitTransform" bind:tap="exitTransform">
+      <text class="TransformDeviceTitle">取消</text>
+    </button>
   </view>
 </view>
 <!--主页弹窗-->

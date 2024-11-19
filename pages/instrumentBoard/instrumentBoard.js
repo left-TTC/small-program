@@ -1,6 +1,7 @@
 // pages/instrumentBoard/instrumentBoard.js
 import ethers from '../../dist/ethers.js';
 import CryptoJS from '../../dist/crypto-js.js';   //aes加密
+import drawQrcode from 'weapp-qrcode';
 
 Page({
   data: {
@@ -20,8 +21,8 @@ Page({
     mileageavailable:'检测中',
     Batterylockstate:-1,
     ifConnect:0,          //启动状态
-    devicecon:1,          //是否连接到车    iNIT 0
-    showingModal:false,  //连接弹窗     Init true
+    devicecon:0,          //是否连接到车    iNIT 0
+    showingModal:true,  //连接弹窗     Init true
     showingUserModal:false,        //用户界面弹窗
     ifUserLoad:false,      //用户是否登录
     ifRegisterAction:false,       //是否是注册行为 
@@ -53,7 +54,7 @@ Page({
     isCollecting: true,  //是否需要继续连接字段
     ifUserInfo:false,    //是否已经储存账户信息
     ifShowUserInfo:false,//点击跳跃到基本信息栏
-    ifMyDevice:false,    //显示为是否为我的车
+    ifMyDevice:false,    //显示为是否为我的车  init:false
     showingRentModal:false,//是否显示出借相关弹窗
     rentAddressInput:'',
     ifOpenBattery:'no',
@@ -63,6 +64,9 @@ Page({
     showChangePAW:false ,//进入具体修改电话和微信的界面
     ifRentopenBattery:'',//记录如果是租界用户能不能开座舱锁
     whenRentCanUsedTo:'',//记录租借用户可以使用设备到什么时候
+    showNeedRentModal:false,//需要借用设备时展示
+    showTransferDevice:false,//转让设备界面
+    transformInput:'',
   },
   /**
    * 生命周期函数--监听页面加载
@@ -309,10 +313,7 @@ listentoBlue:function(){//收取信息
     const match = this.data.jsonDataString.match(/<BN([\s\S]*?)OR>/);
     if (match && match[1]) {
       const wrappedData = match[1];  // 提取 <BG ... OR> 中的数据部分
-      //console.log("提取到的完整数据:", wrappedData);
       const [part1, part2] = wrappedData.split('+++');
-      //console.log("分割后的部分1:", part1); //base like votalge
-      //console.log("分割后的部分2:", part2); //flash
       this.HandleCarve(part1,part2);
       this.setData({
         jsonDataString: ''
@@ -321,18 +322,18 @@ listentoBlue:function(){//收取信息
   },HandleCarve:function(part1,part2){
     const parsedData1=JSON.parse(part1);const parsedData2=JSON.parse(part2);
     console.log(parsedData1);console.log(parsedData2);
-    if(parsedData2.Name && parsedData2.WalletAddress){
+    if(parsedData2.Name && parsedData2.Wallet){
       this.handleUserInfo(parsedData2);
     }if(parsedData1.BatteryState){
       this.handleDeviceStatus(parsedData1);
     }
   },handleUserInfo:function(data){
     const name = data.Name;
-    const userWechat = data.UserWechat;
-    const userPhone = data.UserPhone;
-    const BikeAddress = data.WalletAddress;
+    const userWechat = data.chat;
+    const userPhone = data.Phone;
+    const BikeAddress = data.Wallet;
     this.setData({connectingName:name})
-    if(BikeAddress === this.data.wallet.address){ //说明是自己的车
+    if(BikeAddress === this.data.wallet.address.substring(2)){ //说明是自己的车
       this.setData({ifMyDevice:true})             //标记
       if((userWechat != this.data.UsingDeviceChat || userPhone != this.data.UsingDevicePhone)&&(this.data.UsingDeviceChat.length>0||this.data.UsingDevicePhone.length>0)){
         console.log(userWechat);console.log(this.data.UsingDeviceChat);
@@ -389,6 +390,10 @@ listentoBlue:function(){//收取信息
     else if(ERR === 'IDErr'){wx.showToast({title: '出现了连接错误，请稍后再试',icon:'loading',duration:1000})}
     else if(ERR === 'SignErr'){wx.showToast({title: '您的命令不是合法的',icon:'error',duration:1000})}
     else if(ERR === 'TimeErr'){wx.showToast({title: '您的命令已经过期',icon:'error',duration:1000})}
+    else if(ERR === 'RegisterErr'){wx.showToast({title: '注册失败，请重试',icon:'error',duration:1000})}
+    else if(ERR === 'ChangeSuperOK'){wx.showToast({title: '转让成功',icon:'success',duration:1000})}
+    else if(ERR === 'addPACOK'){wx.showToast({title: '添加信息成功',icon:'success',duration:1000})}
+    else if(ERR === 'update'){wx.showToast({title: '添加租借成功',icon:'success',duration:1000})}
   },DealRunningStatus:function(data){
     if(data === 1){this.setData({ifConnect:1})}           //切换到已经开启状态
     else if(data === 0){this.setData({ifConnect:0})}
@@ -948,10 +953,38 @@ backToWallet:function(){
     })
   }else{wx.showToast({title: '错误的电话格式',icon:'error',duration:1000 })}
 },
-
+/*
 test:function(){
-  wx.openUrl({
-    url: 'https://u.wechat.com/EDNEMHbDgmBm4HSYzifeImA?s=1'
-  });  
-},
+  this.generateQRCode();
+  this.setData({showNeedRentModal:true})
+}, generateQRCode: function() {
+  const qrCodeString = "https://u.wechat.com/EDNEMHbDgmBm4HSYzifeImA?s=1"; // 要生成二维码的字符串
+  drawQrcode({
+      width: 200, // 二维码宽度
+      height: 200, // 二维码高度
+      canvasId: 'myQrcode', // canvas 的 ID
+      text: qrCodeString, // 二维码内容
+      correctLevel: { L: 1, M: 0, Q: 3, H: 2 }[H], // 纠错级别，L、M、Q、H
+      background: '#ffffff', // 背景色
+      foreground: '#000000' // 前景色
+  });
+}*/
+
+//转让
+showTransferDevice:function(){
+  this.setData({showTransferDevice:true})
+},transformInput:function(e){
+  this.setData({
+    transformInput: e.detail.value
+  })
+},TransformDevicebutton:function(){
+  if(this.data.transformInput.length == 42){
+    const cmd = 'SuChange'+this.data.transformInput;
+    this.sendsecretUnfixedCommand(cmd)
+  }else {
+    wx.showToast({title: '地址不和规范',icon:'error',duration:1000})
+  }
+},exitTransform:function(){
+  this.setData({showTransferDevice:false})
+}
 })
